@@ -79,24 +79,30 @@ function showCategorySoal($chatId, $messageId = null) {
 1️⃣ Niat Baik: Bertanya untuk mencari ilmu, bukan untuk menguji.
 2️⃣ Hormati: Gunakan bahasa yang sopan dan jangan memotong.
 3️⃣ Pertanyaan Singkat: Sampaikan langsung ke inti pertanyaan.
-4️⃣ Akhiri dengan Terima Kasih: Ucapkan terima kasih dan doakan kebaikan.\n\n
+4️⃣ Akhiri dengan Terima Kasih: Ucapkan terima kasih dan doakan kebaikan.
+
 Klik tombol Lanjutkan Untuk Bertanya";
-    
-    // Link Web App Telegram
+
+    // Mini App URL
     $webAppUrl = "https://google.com"; // Ganti dengan URL Web App Anda
 
     $keyboard = array(
         array(
-            array("text" => "Lanjutkan", "url" => $webAppUrl)
+            array(
+                "text" => "Lanjutkan",
+                "web_app" => array("url" => $webAppUrl)  // Menggunakan web_app untuk Mini App
+            )
         ),
         array(
-            array("text" => "Kembali", "callback_data" => "back_to_start")
+            array(
+                "text" => "Kembali",
+                "callback_data" => "back_to_start"
+            )
         )
     );
 
     editMessageCaption($chatId, $messageId, $text, $keyboard);
 }
-
 
 function showMasyaikhList($chatId, $messageId = null) {
     $text = "Pilih profil Masyaikh yang ingin Anda lihat:";
