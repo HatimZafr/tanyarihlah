@@ -84,7 +84,7 @@ function showCategorySoal($chatId, $messageId = null) {
 Klik tombol Lanjutkan Untuk Bertanya";
 
     // Mini App URL
-    $webAppUrl = "https://tanyarihlah.bohr.io/tr.html?$chatId"; // Ganti dengan URL Web App Anda
+    $webAppUrl = "https://tanyarihlah.bohr.io/tr.html?chat_id=$chatId"; // Ganti dengan URL Web App Anda
 
     $keyboard = array(
         array(
