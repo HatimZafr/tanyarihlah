@@ -10,7 +10,7 @@
 
     <?php
     $botToken = '7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI';
-    $webhookUrl = 'https://tanyarihlah.bohr.io/bot.php';
+    $webhookUrl = 'https://tanyarihlah.bohr.io/bot1.php';
     $url = "https://api.telegram.org/bot$botToken/setWebhook?url=" . urlencode($webhookUrl);
     $response = file_get_contents($url);
 
