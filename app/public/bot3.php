@@ -35,7 +35,7 @@ function callGoogleScript($action, $chatId, $state = null, $category = null) {
 }
 // Menyimpan state pengguna ke Google Sheets
 function saveUserState($chatId, $state, $category) {
-    callGoogleScript('save', $chatId, $state['state'], $state['category']);
+    callGoogleScript('save', $chatId, $state['state'], $category);
 }
 
 // Mengambil state pengguna dari Google Sheets
