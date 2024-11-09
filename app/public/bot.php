@@ -3,11 +3,7 @@
 $botToken = '7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI';
 $apiUrl = "https://api.telegram.org/bot$botToken/";
 
-// Array untuk melacak state user
-$userStates = array();
-
-// Fungsi untuk mengirim pesan dengan gambar dan tombol inline
-    function sendStartMessageWithPhoto($chatId, $photoUrl, $text, $keyboard) {
+function sendStartMessageWithPhoto($chatId, $photoUrl, $text, $keyboard) {
     global $apiUrl;
     $data = array(
         'chat_id' => $chatId,
@@ -29,7 +25,6 @@ $userStates = array();
     return json_decode($response, true);
 }
 
-// Fungsi untuk mengirim pesan biasa
 function sendMessage($chatId, $text, $keyboard = null) {
     global $apiUrl;
     $data = array(
@@ -53,7 +48,6 @@ function sendMessage($chatId, $text, $keyboard = null) {
     file_get_contents($apiUrl . "sendMessage", false, $context);
 }
 
-// Fungsi untuk mengedit caption gambar yang telah dikirim
 function editMessageCaption($chatId, $messageId, $newCaption, $keyboard = null) {
     global $apiUrl;
     $data = array(
@@ -79,7 +73,6 @@ function editMessageCaption($chatId, $messageId, $newCaption, $keyboard = null) 
     file_get_contents($url, false, $context);
 }
 
-// Fungsi untuk menampilkan daftar kategori soal
 function showCategorySoal($chatId, $messageId = null) {
     $text = "Pilih Kategori Pertanyaan Antum:";
     $keyboard = array(
@@ -101,7 +94,6 @@ function showCategorySoal($chatId, $messageId = null) {
     editMessageCaption($chatId, $messageId, $text, $keyboard);
 }
 
-// Fungsi untuk menampilkan daftar Masyaikh
 function showMasyaikhList($chatId, $messageId = null) {
     $text = "Pilih profil Masyaikh yang ingin Anda lihat:";
     $keyboard = array(
@@ -117,59 +109,12 @@ function showMasyaikhList($chatId, $messageId = null) {
     editMessageCaption($chatId, $messageId, $text, $keyboard);
 }
 
-// Fungsi untuk menangani pertanyaan yang masuk
-function handleQuestion($chatId, $question, $category) {
-    global $userStates;
-    
-    // Validasi pertanyaan
-    if (strlen($question) < 10) {
-        sendMessage($chatId, "Mohon maaf, pertanyaan terlalu singkat. Silakan berikan pertanyaan yang lebih detail.");
-        return;
-    }
-
-    // Format pertanyaan untuk disimpan/dikirim
-    $formattedQuestion = "Kategori: " . strtoupper($category) . "\n" .
-                        "Pertanyaan: " . $question . "\n" .
-                        "Waktu: " . date('Y-m-d H:i:s') . "\n" .
-                        "User ID: " . $chatId;
-
-    // Kirim konfirmasi ke user
-    $confirmationText = "✅ Pertanyaan Anda telah diterima!\n\n" .
-                       "Kategori: <b>" . strtoupper($category) . "</b>\n\n" .
-                       "Pertanyaan:\n" . $question . "\n\n" .
-                       "InsyaAllah akan kami sampaikan kepada Masyaikh. " .
-                       "Jawaban akan dikirimkan melalui bot ini atau channel kami.\n\n" .
-                       "Untuk bertanya lagi, silakan pilih kategori kembali.";
-
-    $keyboard = array(
-        array(
-            array("text" => "Tanya Lagi", "callback_data" => "show_category_soal")
-        )
-    );
-
-    sendMessage($chatId, $confirmationText, $keyboard);
-
-    // Reset state user
-    unset($userStates[$chatId]);
-}
-
-// Fungsi untuk menangani pesan masuk
 function handleMessage($update) {
-    global $userStates;
     $message = $update->message;
     $chatId = $message->chat->id;
     $text = $message->text;
 
-    // Cek apakah user sedang dalam mode bertanya
-    if (isset($userStates[$chatId]) && $userStates[$chatId]['state'] === 'asking') {
-        handleQuestion($chatId, $text, $userStates[$chatId]['category']);
-        return;
-    }
-
     if ($text == "/start") {
-        // Reset user state ketika memulai ulang
-        unset($userStates[$chatId]);
-        
         $photoUrl = "https://tanyarihlah.bohr.io/images/image.png";
         $welcomeText = "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
 
@@ -181,12 +126,11 @@ Bot ini dibuat untuk membantu menyampaikan pertanyaan Anda kepada para masyaikh 
 
 1️⃣ Mengumpulkan pertanyaan dari pengikut Program Rihlah Thalabul Ilmi untuk disampaikan langsung kepada masyaikh.
 2️⃣ Menyajikan jawaban dari para masyaikh dalam bentuk audio dan ringkasan jawaban.
-3️⃣ Selain itu, bot ini juga menampilkan jawaban dari pertanyaan-pertanyaan penting yang kami dapatkan selama belajar bersama para masyaikh.
 
 ❓ Silakan kirim pertanyaan Anda melalui bot ini, dan kami akan bantu menyampaikannya.
 
 Semoga Allah memberikan kita ilmu yang bermanfaat.";
-
+        
         $keyboard = array(
             array(
                 array("text" => "Bertanya", "callback_data" => "show_category_soal")),
@@ -202,29 +146,44 @@ Semoga Allah memberikan kita ilmu yang bermanfaat.";
     } elseif ($text == "/help") {
         sendMessage($chatId, "Berikut adalah beberapa perintah yang tersedia:\n/start - Memulai percakapan\n/help - Menampilkan bantuan");
     } else {
+        // Check if this message is in response to a category selection
+        if (isset($message->reply_to_message) && 
+            isset($message->reply_to_message->photo) && 
+            strpos($message->reply_to_message->caption, '[AKTIF-KATEGORI:') !== false) {
+            
+            // Extract category from the caption
+            preg_match('/\[AKTIF-KATEGORI:(.*?)\]/', $message->reply_to_message->caption, $matches);
+            if (isset($matches[1])) {
+                $category = trim($matches[1]);
+                
+                // Process the question
+                $questionText = "✅ Pertanyaan Anda telah diterima\n\n" .
+                              "Kategori: " . strtoupper($category) . "\n" .
+                              "Pertanyaan: " . $text . "\n\n" .
+                              "Pertanyaan Anda akan kami sampaikan kepada Masyaikh. " .
+                              "Mohon bersabar menunggu jawabannya.";
+                
+                sendMessage($chatId, $questionText);
+                
+                // Reset the message to category selection
+                showCategorySoal($chatId, $message->reply_to_message->message_id);
+                return;
+            }
+        }
+        
         sendMessage($chatId, "Maaf, saya tidak mengerti perintah tersebut. Silakan gunakan /start untuk memulai.");
     }
 }
 
-// Fungsi untuk menangani callback query
 function handleCallbackQuery($callbackQuery) {
-    global $userStates;
     $chatId = $callbackQuery->message->chat->id;
     $messageId = $callbackQuery->message->message_id;
     $data = $callbackQuery->data;
 
-    // Handle kategori pertanyaan
     $categories = array('aqidah', 'fiqh', 'tafsir', 'hadits', 'umum');
     if (in_array($data, $categories)) {
-        // Set state user ke mode bertanya untuk kategori yang dipilih
-        $userStates[$chatId] = array(
-            'state' => 'asking',
-            'category' => $data
-        );
-        
         $text = "Anda telah memilih kategori <b>" . strtoupper($data) . "</b>\n\n" .
-                "Silakan ketik pertanyaan Anda sekarang. Pertanyaan akan disampaikan kepada Masyaikh sesuai dengan kategori yang dipilih.\n\n" .
-                "Untuk membatalkan, tekan tombol 'Kembali ke Kategori' di bawah ini.";
+                "Silakan ketik pertanyaan Anda sebagai balasan untuk pesan ini.\n\n";
         
         $keyboard = array(
             array(
@@ -236,7 +195,6 @@ function handleCallbackQuery($callbackQuery) {
         return;
     }
 
-    // Handle menu callbacks
     switch($data) {
         case "show_category_soal":
             showCategorySoal($chatId, $messageId);
@@ -274,7 +232,6 @@ Bot ini dibuat untuk membantu menyampaikan pertanyaan Anda kepada para masyaikh 
 
 1️⃣ Mengumpulkan pertanyaan dari pengikut Program Rihlah Thalabul Ilmi untuk disampaikan langsung kepada masyaikh.
 2️⃣ Menyajikan jawaban dari para masyaikh dalam bentuk audio dan ringkasan jawaban.
-3️⃣ Selain itu, bot ini juga menampilkan jawaban dari pertanyaan-pertanyaan penting yang kami dapatkan selama belajar bersama para masyaikh.
 
 ❓ Silakan kirim pertanyaan Anda melalui bot ini, dan kami akan bantu menyampaikannya.
 
@@ -294,11 +251,11 @@ Semoga Allah memberikan kita ilmu yang bermanfaat.";
     }
 }
 
-// Mendapatkan pembaruan dari Telegram
+// Entry point - menerima update dari Telegram
 $update = json_decode(file_get_contents("php://input"));
 
 if (isset($update->message)) {
-    $messageId = handleMessage($update);
+    handleMessage($update);
 } elseif (isset($update->callback_query)) {
     handleCallbackQuery($update->callback_query);
 }
