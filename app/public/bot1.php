@@ -77,7 +77,7 @@ function showCategorySoal($chatId, $messageId = null) {
     $text = "📜 Peraturan Sederhana Bertanya kepada Masyaikh:
 
 1️⃣ Niat Baik: Bertanya untuk mencari ilmu, bukan untuk menguji.
-2️⃣ Hormati: Gunakan bahasa yang sopan dan jangan memotong.
+2️⃣ Hormati: Gunakan bahasa yang sopan dan jelas.
 3️⃣ Pertanyaan Singkat: Sampaikan langsung ke inti pertanyaan.
 4️⃣ Akhiri dengan Terima Kasih: Ucapkan terima kasih dan doakan kebaikan.
 
