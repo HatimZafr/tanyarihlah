@@ -113,35 +113,6 @@ function handleMessage($update) {
     $message = $update->message;
     $chatId = $message->chat->id;
     $text = $message->text;
-    
-    // Check if there's a reply to a message
-    if (isset($message->reply_to_message)) {
-        $replyToMessage = $message->reply_to_message;
-        if (strpos($replyToMessage->text, '[KATEGORI:') !== false) {
-            // Extract category from the original message
-            preg_match('/\[KATEGORI:(.*?)\]/', $replyToMessage->text, $matches);
-            $category = trim($matches[1]);
-            
-            // Process the question
-            $questionText = "✅ Pertanyaan Anda telah diterima\n\n" .
-                          "Kategori: " . strtoupper($category) . "\n" .
-                          "Pertanyaan: " . $text . "\n\n" .
-                          "Pertanyaan Anda akan kami sampaikan kepada Masyaikh. " .
-                          "Mohon bersabar menunggu jawabannya.";
-            
-            sendMessage($chatId, $questionText);
-            
-            // Send another message allowing them to ask a new question
-            $newQuestionText = "Untuk mengajukan pertanyaan baru, silakan pilih kategori kembali:";
-            $keyboard = array(
-                array(
-                    array("text" => "Pilih Kategori Baru", "callback_data" => "show_category_soal")
-                )
-            );
-            sendMessage($chatId, $newQuestionText, $keyboard);
-            return;
-        }
-    }
 
     if ($text == "/start") {
         $photoUrl = "https://tanyarihlah.bohr.io/images/image.png";
@@ -155,7 +126,6 @@ Bot ini dibuat untuk membantu menyampaikan pertanyaan Anda kepada para masyaikh 
 
 1️⃣ Mengumpulkan pertanyaan dari pengikut Program Rihlah Thalabul Ilmi untuk disampaikan langsung kepada masyaikh.
 2️⃣ Menyajikan jawaban dari para masyaikh dalam bentuk audio dan ringkasan jawaban.
-3️⃣ Selain itu, bot ini juga menampilkan jawaban dari pertanyaan-pertanyaan penting yang kami dapatkan selama belajar bersama para masyaikh.
 
 ❓ Silakan kirim pertanyaan Anda melalui bot ini, dan kami akan bantu menyampaikannya.
 
@@ -176,6 +146,31 @@ Semoga Allah memberikan kita ilmu yang bermanfaat.";
     } elseif ($text == "/help") {
         sendMessage($chatId, "Berikut adalah beberapa perintah yang tersedia:\n/start - Memulai percakapan\n/help - Menampilkan bantuan");
     } else {
+        // Check if this message is in response to a category selection
+        if (isset($message->reply_to_message) && 
+            isset($message->reply_to_message->photo) && 
+            strpos($message->reply_to_message->caption, '[AKTIF-KATEGORI:') !== false) {
+            
+            // Extract category from the caption
+            preg_match('/\[AKTIF-KATEGORI:(.*?)\]/', $message->reply_to_message->caption, $matches);
+            if (isset($matches[1])) {
+                $category = trim($matches[1]);
+                
+                // Process the question
+                $questionText = "✅ Pertanyaan Anda telah diterima\n\n" .
+                              "Kategori: " . strtoupper($category) . "\n" .
+                              "Pertanyaan: " . $text . "\n\n" .
+                              "Pertanyaan Anda akan kami sampaikan kepada Masyaikh. " .
+                              "Mohon bersabar menunggu jawabannya.";
+                
+                sendMessage($chatId, $questionText);
+                
+                // Reset the message to category selection
+                showCategorySoal($chatId, $message->reply_to_message->message_id);
+                return;
+            }
+        }
+        
         sendMessage($chatId, "Maaf, saya tidak mengerti perintah tersebut. Silakan gunakan /start untuk memulai.");
     }
 }
@@ -188,16 +183,16 @@ function handleCallbackQuery($callbackQuery) {
     $categories = array('aqidah', 'fiqh', 'tafsir', 'hadits', 'umum');
     if (in_array($data, $categories)) {
         $text = "Anda telah memilih kategori <b>" . strtoupper($data) . "</b>\n\n" .
-                "Silakan ketik pertanyaan Anda sebagai balasan pesan ini.\n\n" .
-                "[KATEGORI:" . $data . "]";
+                "Silakan ketik pertanyaan Anda sebagai balasan untuk pesan ini.\n\n" .
+                "[AKTIF-KATEGORI:" . $data . "]";
         
         $keyboard = array(
             array(
-                array("text" => "Pilih Kategori Lain", "callback_data" => "show_category_soal")
+                array("text" => "Kembali ke Kategori", "callback_data" => "show_category_soal")
             )
         );
         
-        sendMessage($chatId, $text, $keyboard);
+        editMessageCaption($chatId, $messageId, $text, $keyboard);
         return;
     }
 
@@ -238,7 +233,6 @@ Bot ini dibuat untuk membantu menyampaikan pertanyaan Anda kepada para masyaikh 
 
 1️⃣ Mengumpulkan pertanyaan dari pengikut Program Rihlah Thalabul Ilmi untuk disampaikan langsung kepada masyaikh.
 2️⃣ Menyajikan jawaban dari para masyaikh dalam bentuk audio dan ringkasan jawaban.
-3️⃣ Selain itu, bot ini juga menampilkan jawaban dari pertanyaan-pertanyaan penting yang kami dapatkan selama belajar bersama para masyaikh.
 
 ❓ Silakan kirim pertanyaan Anda melalui bot ini, dan kami akan bantu menyampaikannya.
 
