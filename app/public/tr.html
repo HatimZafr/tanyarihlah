@@ -1,179 +1,543 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kategori Kajian Islam</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Ubuntu;
+      }
 
-        body {
-            background: #f0f2f5;
-            min-height: 100vh;
-        }
+      body {
+        background: #f0f2f5;
+        min-height: 100vh;
+      }
 
-        .container {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 16px;
+      .container {
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+
+      .header {
+        text-align: center;
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        background: linear-gradient(135deg, #4f0c2b 0%, #731231 100%);
+      }
+
+      .header h1 {
+        color: white;
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+
+      .header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        padding: 8px;
+      }
+
+      .card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .card i {
+        font-size: 32px;
+        margin-bottom: 12px;
+        background: linear-gradient(45deg, #4f0c2b, #731231);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+      }
+
+      .card h3 {
+        color: #202124;
+        font-size: 16px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      .card p {
+        color: #5f6368;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(45deg, #4f0c2b, #731231);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+        transform-origin: left;
+      }
+
+      .card:hover::before {
+        transform: scaleX(1);
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 400px;
+        position: relative;
+        animation: modalSlideIn 0.3s ease;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .modal-header {
+        margin-bottom: 16px;
+      }
+
+      .modal-header h2 {
+        color: #202124;
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+
+      .modal-header p {
+        color: #5f6368;
+        font-size: 14px;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        font-size: 24px;
+        color: #5f6368;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+
+      .question-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .question-form textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 12px;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+        font-size: 14px;
+        resize: vertical;
+      }
+
+      .question-form button {
+        background: linear-gradient(45deg, #4f0c2b, #731231);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+      }
+
+      .question-form button:hover {
+        opacity: 0.9;
+      }
+
+      /* Success Modal Styles */
+      .success-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .success-content {
+        background: white;
+        padding: 32px;
+        border-radius: 16px;
+        text-align: center;
+        position: relative;
+        width: 90%;
+        max-width: 320px;
+      }
+
+      .success-animation {
+        position: relative;
+        height: 150px;
+        margin-bottom: 20px;
+      }
+
+      .plane-container {
+        position: absolute;
+        left: -100%;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        animation: flyPlane 2s ease-in-out;
+      }
+
+      .plane {
+        font-size: 40px;
+        color: #4f0c2b;
+        transform: rotate(25deg);
+        display: inline-block;
+      }
+
+      .trail {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 0%;
+        height: 2px;
+        background: linear-gradient(to right, #4f0c2b, transparent);
+        transform: translateY(-50%);
+        animation: drawLine 1.5s ease-out;
+      }
+
+      @keyframes flyPlane {
+        0% {
+          left: -100%;
+          opacity: 0;
+        }
+        20% {
+          opacity: 1;
+        }
+        80% {
+          opacity: 1;
+        }
+        100% {
+          left: 200%;
+          opacity: 0;
+        }
+      }
+
+      @keyframes drawLine {
+        0% {
+          width: 0;
+          opacity: 0;
+        }
+        20% {
+          opacity: 1;
+        }
+        80% {
+          width: 100%;
+          opacity: 1;
+        }
+        100% {
+          width: 100%;
+          opacity: 0;
+        }
+      }
+
+      .success-message {
+        color: #202124;
+        font-size: 18px;
+        margin-bottom: 12px;
+      }
+
+      .success-subtitle {
+        color: #5f6368;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      .success-button {
+        background: linear-gradient(45deg, #4f0c2b, #731231);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+      }
+
+      .success-button:hover {
+        opacity: 0.9;
+      }
+
+      /* Loading Spinner */
+      .loading-spinner {
+        display: none;
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 16px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #4f0c2b;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .submit-button-container {
+        position: relative;
+      }
+
+      .submit-button-container button {
+        width: 100%;
+      }
+
+      .submit-button-container .loading-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0;
+      }
+
+      @media (max-width: 360px) {
+        .grid {
+          grid-template-columns: 1fr;
         }
 
         .header {
-            text-align: center;
-            margin: 20px 0;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            background: linear-gradient(135deg, #4f0c2b 0%, #731231 100%);
+          padding: 16px;
         }
 
         .header h1 {
-            color: white;
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
-
-        .header p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 14px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            padding: 8px;
+          font-size: 20px;
         }
 
         .card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          padding: 16px;
         }
 
         .card i {
-            font-size: 32px;
-            margin-bottom: 12px;
-            background: linear-gradient(45deg, #4f0c2b, #731231);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
+          font-size: 28px;
         }
 
-        .card h3 {
-            color: #202124;
-            font-size: 16px;
-            margin-bottom: 8px;
-            font-weight: 600;
+        .modal-content {
+          padding: 16px;
         }
-
-        .card p {
-            color: #5f6368;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(45deg, #4f0c2b, #731231);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-            transform-origin: left;
-        }
-
-        .card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .card-count {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: #f1f3f4;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            color: #5f6368;
-        }
-
-        @media (max-width: 360px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-
-            .header {
-                padding: 16px;
-            }
-
-            .header h1 {
-                font-size: 20px;
-            }
-
-            .card {
-                padding: 16px;
-            }
-
-            .card i {
-                font-size: 28px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <h1>Kategori Pertanyaan</h1>
-            <p>Pilih kategori yang ingin Antum Tanyakan</p>
+      <div class="header">
+        <h1>Kategori Kajian Islam</h1>
+        <p>Pilih kategori yang ingin Antum Tanyakan</p>
+      </div>
+
+      <div class="grid">
+        <div class="card" onclick="openModal('Aqidah')">
+          <i class="fas fa-star-and-crescent"></i>
+          <h3>Aqidah</h3>
         </div>
 
-        <div class="grid">
-            <div class="card">
-                <i class="fas fa-star-and-crescent"></i>
-                <h3>Aqidah</h3>
-            </div>
-
-            <div class="card">
-                <i class="fas fa-pray"></i>
-                <h3>Fiqih</h3>
-            </div>
-
-            <div class="card">
-                <i class="fas fa-book-open"></i>
-                <h3>Tafsir</h3>
-            </div>
-
-            <div class="card">
-                <i class="fas fa-book"></i>
-                <h3>Hadits</h3>
-            </div>
-
-            <div class="card">
-                <i class="fas fa-mosque"></i>
-                <h3>Umum</h3>
-            </div>
+        <div class="card" onclick="openModal('Fiqih')">
+          <i class="fas fa-pray"></i>
+          <h3>Fiqih</h3>
         </div>
+
+        <div class="card" onclick="openModal('Tafsir')">
+          <i class="fas fa-book-open"></i>
+          <h3>Tafsir</h3>
+        </div>
+
+        <div class="card" onclick="openModal('Hadits')">
+          <i class="fas fa-book"></i>
+          <h3>Hadits</h3>
+        </div>
+
+        <div class="card" onclick="openModal('Umum')">
+          <i class="fas fa-mosque"></i>
+          <h3>Umum</h3>
+        </div>
+      </div>
     </div>
-</body>
+
+    <!-- Question Modal -->
+    <div id="questionModal" class="modal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <div class="modal-header">
+          <h2>Pertanyaan <span id="categoryName"></span></h2>
+          <p>
+            Silakan ajukan pertanyaan Anda sesuai dengan kategori yang dipilih
+          </p>
+        </div>
+        <form class="question-form" onsubmit="submitQuestion(event)">
+          <textarea
+            placeholder="Tulis pertanyaan Anda di sini..."
+            required
+          ></textarea>
+          <div class="submit-button-container">
+            <button type="submit">Kirim Pertanyaan</button>
+            <div class="loading-spinner"></div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="success-modal">
+      <div class="success-content">
+        <div class="success-animation">
+          <div class="trail"></div>
+          <div class="plane-container">
+            <i class="fas fa-paper-plane plane"></i>
+          </div>
+        </div>
+        <h3 class="success-message">Pertanyaan Terkirim!</h3>
+        <p class="success-subtitle">Terima kasih atas pertanyaan Anda</p>
+        <button onclick="closeSuccessModal()" class="success-button">
+          Kembali
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const modal = document.getElementById("questionModal");
+      const successModal = document.getElementById("successModal");
+      const categoryNameSpan = document.getElementById("categoryName");
+      const loadingSpinner = document.querySelector(".loading-spinner");
+      const submitButton = document.querySelector(".question-form button");
+      let currentCategory = "";
+
+      function openModal(category) {
+        modal.style.display = "flex";
+        currentCategory = category;
+        categoryNameSpan.textContent = category;
+      }
+
+      function closeModal() {
+        modal.style.display = "none";
+        document.querySelector(".question-form textarea").value = "";
+      }
+
+      function showLoadingState() {
+        loadingSpinner.style.display = "block";
+        submitButton.style.opacity = "0";
+      }
+
+      function hideLoadingState() {
+        loadingSpinner.style.display = "none";
+        submitButton.style.opacity = "1";
+      }
+
+      function showSuccessModal() {
+        successModal.style.display = "flex";
+        // Reset animation by removing and re-adding elements
+        const animation = document.querySelector(".success-animation");
+        const animationHTML = animation.innerHTML;
+        animation.innerHTML = "";
+        setTimeout(() => {
+          animation.innerHTML = animationHTML;
+        }, 10);
+      }
+
+      function closeSuccessModal() {
+        successModal.style.display = "none";
+      }
+
+      async function submitQuestion(event) {
+        event.preventDefault();
+        const question = event.target.querySelector("textarea").value;
+
+        // Show loading state
+        showLoadingState();
+
+        try {
+          // Simulate API call with setTimeout
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+
+          // Hide question modal and show success modal
+          closeModal();
+          showSuccessModal();
+
+          console.log("Kategori:", currentCategory);
+          console.log("Pertanyaan:", question);
+        } catch (error) {
+          alert("Terjadi kesalahan. Silakan coba lagi.");
+        } finally {
+          hideLoadingState();
+        }
+      }
+
+      // Close modals when clicking outside
+      window.onclick = function (event) {
+        if (event.target === modal) {
+          closeModal();
+        }
+        if (event.target === successModal) {
+          closeSuccessModal();
+        }
+      };
+    </script>
+  </body>
 </html>
