@@ -119,14 +119,14 @@ function handleMessage($update) {
     $text = $message->text;
 
     // Periksa apakah pengguna sedang dalam status bertanya
-    if (isset($userSessions[$chatId]) && $userSessions[$chatId]['is_asking']) {
+    if (isset($userSessions[$chatId]) && $userSessions[$chatId]['is_asking'] === true) {
         $category = $userSessions[$chatId]['selected_category'];
 
         // Mengonfirmasi bahwa pertanyaan telah diterima
         $questionText = "✅ Pertanyaan Anda telah diterima\n\n" . 
                         "Kategori: " . strtoupper($category) . "\n" . 
                         "Pertanyaan: " . $text . "\n\n" .
-                        "Pertanyaan Anda akan kami sampaikan kepada Masyaikh. " .
+                        "Pertanyaan Anda akan kami sampaikan kepada Masyaikh. " . 
                         "Mohon bersabar menunggu jawabannya.";
 
         sendMessage($chatId, $questionText);
