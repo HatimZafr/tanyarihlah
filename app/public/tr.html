@@ -389,7 +389,7 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>Thalibul Ilmi Bertanya</h1>
+        <h1>Kategori Kajian Islam</h1>
         <p>Pilih kategori yang ingin Antum Tanyakan</p>
       </div>
 
@@ -469,6 +469,30 @@
       const submitButton = document.querySelector(".question-form button");
       let currentCategory = "";
 
+      // Telegram configuration
+      const TELEGRAM_BOT_TOKEN = '7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI'; // Replace with your bot token
+      const TELEGRAM_ADMIN_ID = '-1002177994977'; // Replace with admin's Telegram ID
+
+      // Thread IDs for each category
+      const CATEGORY_THREADS = {
+        'Aqidah': '3',
+        'Fiqih': '6',
+        'Tafsir': '8',
+        'Hadits': '9',
+        'Umum': '11'
+      };
+
+      // Function to get chat_id from URL
+      function getChatId() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('chat_id') || 'Tidak tersedia';
+      }
+
+      // Function to get thread ID based on category
+      function getThreadId(category) {
+        return CATEGORY_THREADS[category] || 'Tidak tersedia';
+      }
+
       function openModal(category) {
         modal.style.display = "flex";
         currentCategory = category;
@@ -492,7 +516,6 @@
 
       function showSuccessModal() {
         successModal.style.display = "flex";
-        // Reset animation by removing and re-adding elements
         const animation = document.querySelector(".success-animation");
         const animationHTML = animation.innerHTML;
         animation.innerHTML = "";
@@ -505,24 +528,55 @@
         successModal.style.display = "none";
       }
 
+      // Function to send message to Telegram
+      async function sendToTelegram(message) {
+        const chatId = getChatId();
+        const threadId = getThreadId(currentCategory);
+        
+        const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        const messageText = `
+🆕 Pertanyaan Baru
+
+📝 Kategori: ${currentCategory}
+❓ Pertanyaan:
+${message}
+        `;
+
+        const requestOptions = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_ADMIN_ID,
+            message_thread_id: threadId, // Added to send to specific thread
+            text: messageText,
+            parse_mode: 'HTML'
+          })
+        };
+
+        const response = await fetch(telegramApiUrl, requestOptions);
+        if (!response.ok) {
+          throw new Error('Failed to send message to Telegram');
+        }
+        return response.json();
+      }
+
       async function submitQuestion(event) {
         event.preventDefault();
         const question = event.target.querySelector("textarea").value;
 
-        // Show loading state
         showLoadingState();
 
         try {
-          // Simulate API call with setTimeout
-          await new Promise((resolve) => setTimeout(resolve, 1500));
-
-          // Hide question modal and show success modal
+          // Send to Telegram
+          await sendToTelegram(question);
+          
           closeModal();
           showSuccessModal();
 
-          console.log("Kategori:", currentCategory);
-          console.log("Pertanyaan:", question);
         } catch (error) {
+          console.error('Error:', error);
           alert("Terjadi kesalahan. Silakan coba lagi.");
         } finally {
           hideLoadingState();
@@ -539,5 +593,5 @@
         }
       };
     </script>
-  </body>
+      </body>
 </html>
