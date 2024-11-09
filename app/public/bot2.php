@@ -183,8 +183,7 @@ function handleCallbackQuery($callbackQuery) {
     $categories = array('aqidah', 'fiqh', 'tafsir', 'hadits', 'umum');
     if (in_array($data, $categories)) {
         $text = "Anda telah memilih kategori <b>" . strtoupper($data) . "</b>\n\n" .
-                "Silakan ketik pertanyaan Anda sebagai balasan untuk pesan ini.\n\n" .
-                "[AKTIF-KATEGORI:" . $data . "]";
+                "Silakan ketik pertanyaan Anda sebagai balasan untuk pesan ini.\n\n";
         
         $keyboard = array(
             array(
