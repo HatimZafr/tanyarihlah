@@ -141,15 +141,18 @@ Bot ini dibuat untuk membantu menyampaikan pertanyaan Anda kepada para masyaikh 
 
 Semoga Allah memberikan kita ilmu yang bermanfaat.";
         
-        $keyboard = array(
-            array(
-                array("text" => "Bertanya", "callback_data" => "show_category_soal")),
-            array(
-                array("text" => "Biografi Masyaikh", "callback_data" => "show_masyaikh_list")),
-            array(
-                array("text" => "Tentang Bot", "callback_data" => "about_bot")
-            )
-        );
+$keyboard = array(
+    array(
+        array("text" => "Bertanya ❓", "callback_data" => "show_category_soal")
+    ),
+    array(
+        array("text" => "Biografi Masyaikh 📖", "callback_data" => "show_masyaikh_list")
+    ),
+    array(
+        array("text" => "Tentang Bot 🤖", "callback_data" => "about_bot")
+    )
+);
+
         
         $response = sendStartMessageWithPhoto($chatId, $photoUrl, $welcomeText, $keyboard);
         return $response['result']['message_id'];
