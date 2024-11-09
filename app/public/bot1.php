@@ -95,7 +95,7 @@ Klik tombol Lanjutkan Untuk Bertanya";
         ),
         array(
             array(
-                "text" => "Kembali",
+                "text" => "🔙 Kembali",
                 "callback_data" => "back_to_start"
             )
         )
@@ -112,7 +112,7 @@ function showMasyaikhList($chatId, $messageId = null) {
             array("text" => "Profil Syaikh 2", "callback_data" => "profil_syaikh_2")
         ),
         array(
-            array("text" => "Kembali", "callback_data" => "back_to_start")
+            array("text" => "🔙 Kembali", "callback_data" => "back_to_start")
         )
     );
 
@@ -137,19 +137,19 @@ Bot ini dibuat untuk membantu menyampaikan pertanyaan Anda kepada para masyaikh 
 1️⃣ Mengumpulkan pertanyaan dari pengikut Program Rihlah Thalabul Ilmi untuk disampaikan langsung kepada masyaikh.
 2️⃣ Menyajikan jawaban dari para masyaikh dalam bentuk audio dan ringkasan jawaban.
 
-❓ Silakan kirim pertanyaan Anda melalui bot ini, dan kami akan bantu menyampaikannya.
+❓ Silakan kirim pertanyaan Anda melalui bot ini dengan cara klik tombol Bertanya, dan kami akan bantu menyampaikannya.
 
 Semoga Allah memberikan kita ilmu yang bermanfaat.";
         
 $keyboard = array(
     array(
-        array("text" => "Bertanya ❓", "callback_data" => "show_category_soal")
+        array("text" => "❓ Bertanya", "callback_data" => "show_category_soal")
     ),
     array(
-        array("text" => "Biografi Masyaikh 📖", "callback_data" => "show_masyaikh_list")
+        array("text" => "📖 Biografi Masyaikh", "callback_data" => "show_masyaikh_list")
     ),
     array(
-        array("text" => "Tentang Bot 🤖", "callback_data" => "about_bot")
+        array("text" => "🤖 Tentang Bot", "callback_data" => "about_bot")
     )
 );
 
@@ -184,7 +184,7 @@ $keyboard = array(
             }
         }
         
-        sendMessage($chatId, "Maaf, saya tidak mengerti perintah tersebut. Silakan gunakan /start untuk memulai.");
+        sendMessage($chatId, "Afwan, Perintah tersebut tidak Tersedia. Silakan gunakan /start untuk memulai.");
     }
 }
 
@@ -217,17 +217,17 @@ function handleCallbackQuery($callbackQuery) {
             $text = "Antum Dapat Melihat Biografi Masyaikh secara Ringkas di sini, Namun Fitur ini Sedang Dalam Tahap Pengembangan.";
             $keyboard = array(
                 array(
-                    array("text" => "Kembali", "callback_data" => "back_to_start")
+                    array("text" => "🔙 Kembali", "callback_data" => "back_to_start")
                 )
             );
             editMessageCaption($chatId, $messageId, $text, $keyboard);
             break;
             
         case "about_bot":
-            $text = "Bot ini dibuat untuk membantu Anda mendapatkan informasi tentang Masyaikh dan bertanya kepada mereka.";
+            $text = "Bot ini dibuat untuk membantu Antum mendapatkan informasi tentang Masyaikh dan bertanya kepada mereka.";
             $keyboard = array(
                 array(
-                    array("text" => "Kembali", "callback_data" => "back_to_start")
+                    array("text" => "🔙 Kembali", "callback_data" => "back_to_start")
                 )
             );
             editMessageCaption($chatId, $messageId, $text, $keyboard);
@@ -246,19 +246,21 @@ Bot ini dibuat untuk membantu menyampaikan pertanyaan Anda kepada para masyaikh 
 1️⃣ Mengumpulkan pertanyaan dari pengikut Program Rihlah Thalabul Ilmi untuk disampaikan langsung kepada masyaikh.
 2️⃣ Menyajikan jawaban dari para masyaikh dalam bentuk audio dan ringkasan jawaban.
 
-❓ Silakan kirim pertanyaan Anda melalui bot ini, dan kami akan bantu menyampaikannya.
+❓ Silakan kirim pertanyaan Anda melalui bot ini dengan cara klik tombol Bertanya, dan kami akan bantu menyampaikannya.
 
 Semoga Allah memberikan kita ilmu yang bermanfaat.";
 
-            $keyboard = array(
-                array(
-                    array("text" => "Bertanya", "callback_data" => "show_category_soal")),
-                array(
-                    array("text" => "Biografi Masyaikh", "callback_data" => "show_masyaikh_list")),
-                array(
-                    array("text" => "Tentang Bot", "callback_data" => "about_bot")
-                )
-            );
+$keyboard = array(
+    array(
+        array("text" => "❓ Bertanya", "callback_data" => "show_category_soal")
+    ),
+    array(
+        array("text" => "📖 Biografi Masyaikh", "callback_data" => "show_masyaikh_list")
+    ),
+    array(
+        array("text" => "🤖 Tentang Bot", "callback_data" => "about_bot")
+    )
+);
             editMessageCaption($chatId, $messageId, $welcomeText, $keyboard);
             break;
     }
