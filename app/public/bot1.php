@@ -133,7 +133,7 @@ function handleMessage($update) {
 
         // Reset status pengguna setelah pertanyaan diproses
         unset($userSessions[$chatId]);
-        
+        sleep(2);
         // Kembali ke menu kategori
         showCategorySoal($chatId, $message->message_id);
         return;
