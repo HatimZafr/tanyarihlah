@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kategori Kajian Islam</title>
+    <title>Admin Q&A Response Interface</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -23,7 +23,7 @@
       }
 
       .container {
-        max-width: 480px;
+        max-width: 960px;
         margin: 0 auto;
         padding: 16px;
       }
@@ -48,53 +48,22 @@
         font-size: 14px;
       }
 
-      .grid {
+      .questions-container {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
         gap: 16px;
         padding: 8px;
       }
 
-      .card {
+      .question-card {
         background: white;
         border-radius: 16px;
         padding: 20px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         position: relative;
         overflow: hidden;
       }
 
-      .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-      .card i {
-        font-size: 32px;
-        margin-bottom: 12px;
-        background: linear-gradient(45deg, #4f0c2b, #731231);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        display: inline-block;
-      }
-
-      .card h3 {
-        color: #202124;
-        font-size: 16px;
-        margin-bottom: 8px;
-        font-weight: 600;
-      }
-
-      .card p {
-        color: #5f6368;
-        font-size: 13px;
-        line-height: 1.4;
-      }
-
-      .card::before {
+      .question-card::before {
         content: "";
         position: absolute;
         top: 0;
@@ -102,83 +71,60 @@
         width: 100%;
         height: 4px;
         background: linear-gradient(45deg, #4f0c2b, #731231);
-        transform: scaleX(0);
-        transition: transform 0.3s ease;
-        transform-origin: left;
       }
 
-      .card:hover::before {
-        transform: scaleX(1);
-      }
-
-      /* Modal Styles */
-      .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        justify-content: center;
+      .question-header {
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-      }
-
-      .modal-content {
-        background: white;
-        padding: 24px;
-        border-radius: 16px;
-        width: 90%;
-        max-width: 400px;
-        position: relative;
-        animation: modalSlideIn 0.3s ease;
-      }
-
-      @keyframes modalSlideIn {
-        from {
-          transform: translateY(-20px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-
-      .modal-header {
         margin-bottom: 16px;
       }
 
-      .modal-header h2 {
+      .question-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .metadata {
+        color: #5f6368;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .question-content {
+        margin-bottom: 16px;
+      }
+
+      .question-text {
         color: #202124;
+        font-size: 18px;
+        line-height: 1.5;
+        margin-bottom: 12px;
+      }
+
+      .user-info {
+        color: #5f6368;
         font-size: 20px;
-        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
 
-      .modal-header p {
-        color: #5f6368;
-        font-size: 14px;
+      .user-info i {
+        color: #4f0c2b;
       }
 
-      .modal-close {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        font-size: 24px;
-        color: #5f6368;
-        cursor: pointer;
-        border: none;
-        background: none;
-      }
-
-      .question-form {
+      .response-form {
         display: flex;
         flex-direction: column;
         gap: 16px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #dadce0;
       }
 
-      .question-form textarea {
+      .response-form textarea {
         width: 100%;
         min-height: 120px;
         padding: 12px;
@@ -188,23 +134,47 @@
         resize: vertical;
       }
 
-      .question-form button {
+      .response-form textarea:focus {
+        outline: none;
+        border-color: #4f0c2b;
+        box-shadow: 0 0 0 2px rgba(79, 12, 43, 0.1);
+      }
+
+      .response-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn:hover:not(:disabled) {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .btn-primary {
         background: linear-gradient(45deg, #4f0c2b, #731231);
         color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: opacity 0.3s ease;
       }
 
-      .question-form button:hover {
-        opacity: 0.9;
+      .btn-secondary {
+        background: #f0f2f5;
+        color: #202124;
       }
 
-      /* Success Modal Styles */
-      .success-modal {
+      .modal {
         display: none;
         position: fixed;
         top: 0;
@@ -212,450 +182,327 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1001;
-        justify-content: center;
         align-items: center;
-      }
-
-      .success-content {
-        background: white;
-        padding: 32px;
-        border-radius: 16px;
-        text-align: center;
-        position: relative;
-        width: 90%;
-        max-width: 320px;
-      }
-
-      .success-animation {
-        position: relative;
-        height: 150px;
-        margin-bottom: 20px;
-      }
-
-      .plane-container {
-        position: absolute;
-        left: -100%;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 100%;
-        animation: flyPlane 2s ease-in-out;
-      }
-
-      .plane {
-        font-size: 40px;
-        color: #4f0c2b;
-        transform: rotate(25deg);
-        display: inline-block;
-      }
-
-      .trail {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        width: 0%;
-        height: 2px;
-        background: linear-gradient(to right, #4f0c2b, transparent);
-        transform: translateY(-50%);
-        animation: drawLine 1.5s ease-out;
-      }
-
-      @keyframes flyPlane {
-        0% {
-          left: -100%;
-          opacity: 0;
-        }
-        20% {
-          opacity: 1;
-        }
-        80% {
-          opacity: 1;
-        }
-        100% {
-          left: 200%;
-          opacity: 0;
-        }
-      }
-
-      @keyframes drawLine {
-        0% {
-          width: 0;
-          opacity: 0;
-        }
-        20% {
-          opacity: 1;
-        }
-        80% {
-          width: 100%;
-          opacity: 1;
-        }
-        100% {
-          width: 100%;
-          opacity: 0;
-        }
-      }
-
-      .success-message {
-        color: #202124;
-        font-size: 18px;
-        margin-bottom: 12px;
-      }
-
-      .success-subtitle {
-        color: #5f6368;
-        font-size: 14px;
-        margin-bottom: 20px;
-      }
-
-      .success-button {
-        background: linear-gradient(45deg, #4f0c2b, #731231);
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-size: 14px;
-        cursor: pointer;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
         transition: opacity 0.3s ease;
       }
 
-      .success-button:hover {
-        opacity: 0.9;
+      .modal.show {
+        display: flex;
+        opacity: 1;
       }
 
-      /* Loading Spinner */
-      .loading-spinner {
-        display: none;
-        width: 40px;
-        height: 40px;
-        margin: 0 auto 16px;
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #4f0c2b;
+      .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        text-align: center;
+        position: relative;
+        max-width: 90%;
+        width: 400px;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      }
+
+      .modal.show .modal-content {
+        transform: scale(1);
+      }
+
+      .checkmark {
+        width: 80px;
+        height: 80px;
         border-radius: 50%;
-        animation: spin 1s linear infinite;
+        display: block;
+        stroke-width: 2;
+        stroke: #4BB543;
+        stroke-miterlimit: 10;
+        margin: 10% auto;
+        box-shadow: inset 0px 0px 0px #4BB543;
+        animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+      }
+
+      .checkmark__circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #4BB543;
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+      }
+
+      .checkmark__check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+      }
+
+      .error-message {
+        color: #dc3545;
+        font-size: 14px;
+        margin-top: 4px;
+        display: none;
+      }
+
+      .loading {
+        position: relative;
+        pointer-events: none;
+      }
+
+      .loading::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        margin: -10px 0 0 -10px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
       }
 
       @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
+        to { transform: rotate(360deg); }
       }
 
-      .submit-button-container {
-        position: relative;
+      @keyframes stroke {
+        100% { stroke-dashoffset: 0; }
       }
 
-      .submit-button-container button {
-        width: 100%;
+      @keyframes scale {
+        0%, 100% { transform: none; }
+        50% { transform: scale3d(1.1, 1.1, 1); }
       }
 
-      .submit-button-container .loading-spinner {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        margin: 0;
+      @keyframes fill {
+        100% { box-shadow: inset 0px 0px 0px 30px #4BB543; }
       }
 
-      @media (max-width: 360px) {
-        .grid {
-          grid-template-columns: 1fr;
+      @media (max-width: 640px) {
+        .question-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
         }
 
-        .header {
-          padding: 16px;
+        .response-actions {
+          flex-direction: column;
         }
 
-        .header h1 {
-          font-size: 20px;
-        }
-
-        .card {
-          padding: 16px;
-        }
-
-        .card i {
-          font-size: 28px;
-        }
-
-        .modal-content {
-          padding: 16px;
+        .btn {
+          width: 100%;
         }
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <div class="header">
-        <h1>Thalibul Ilmi Bertanya</h1>
-        <p>Pilih kategori yang ingin Antum Tanyakan</p>
-      </div>
+      <header class="header">
+        <h1>Admin Q&A Dashboard</h1>
+        <p>Manage and respond to user questions</p>
+      </header>
 
-      <div class="grid">
-        <div class="card" onclick="openModal('Aqidah')">
-          <i class="fas fa-star-and-crescent"></i>
-          <h3>Aqidah</h3>
-        </div>
-
-        <div class="card" onclick="openModal('Fiqih')">
-          <i class="fas fa-pray"></i>
-          <h3>Fiqih</h3>
-        </div>
-
-        <div class="card" onclick="openModal('Tafsir')">
-          <i class="fas fa-book-open"></i>
-          <h3>Tafsir</h3>
-        </div>
-
-        <div class="card" onclick="openModal('Hadits')">
-          <i class="fas fa-book"></i>
-          <h3>Hadits</h3>
-        </div>
-
-        <div class="card" onclick="openModal('Umum')">
-          <i class="fas fa-mosque"></i>
-          <h3>Umum</h3>
+      <div class="questions-container">
+        <div class="question-card">
+          <div class="question-header">
+            <div class="question-info">
+              <div class="user-info">
+                <i class="fas fa-user"></i>
+                <span id="userName">Loading...</span>
+              </div>
+            </div>
+          </div>
+          <div class="question-content">
+            <p class="question-text" id="userMessage">Loading...</p>
+            <p class="metadata">
+              Chat ID: <span id="chatId">Loading...</span> | 
+              Message ID: <span id="messageId">Loading...</span>
+            </p>
+          </div>
+          <form class="response-form" id="responseForm">
+            <div>
+              <textarea 
+                id="responseText" 
+                placeholder="Type your response here..." 
+                required
+                minlength="10"
+              ></textarea>
+              <div class="error-message" id="responseError">
+                Response must be at least 10 characters long
+              </div>
+            </div>
+            <div class="response-actions">
+              <button type="submit" class="btn btn-primary" id="sendButton">
+                Send Response
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
 
-    <!-- Question Modal -->
-    <div id="questionModal" class="modal">
+    <div id="successModal" class="modal">
       <div class="modal-content">
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-        <div class="modal-header">
-          <h2>Pertanyaan <span id="categoryName"></span></h2>
-          <p>
-            Silakan ajukan pertanyaan Anda sesuai dengan kategori yang dipilih
-          </p>
-        </div>
-        <form class="question-form" onsubmit="submitQuestion(event)">
-          <textarea
-            placeholder="Tulis pertanyaan Anda di sini..."
-            required
-          ></textarea>
-          <div class="submit-button-container">
-            <button type="submit">Kirim Pertanyaan</button>
-            <div class="loading-spinner"></div>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div id="successModal" class="success-modal">
-      <div class="success-content">
-        <div class="success-animation">
-          <div class="trail"></div>
-          <div class="plane-container">
-            <i class="fas fa-paper-plane plane"></i>
-          </div>
-        </div>
-        <h3 class="success-message">Pertanyaan Terkirim!</h3>
-        <p class="success-subtitle">Terima kasih atas pertanyaan Anda</p>
-        <button onclick="closeSuccessModal()" class="success-button">
-          Kembali
-        </button>
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+        <h3 style="color: #4BB543; font-size: 24px; margin-bottom: 10px;">Success!</h3>
+        <p style="color: #666; margin-bottom: 20px;">Response has been sent successfully</p>
+        <button onclick="closeModal()" class="btn btn-primary">Close</button>
       </div>
     </div>
 
     <script>
-      const modal = document.getElementById("questionModal");
-      const successModal = document.getElementById("successModal");
-      const categoryNameSpan = document.getElementById("categoryName");
-      const loadingSpinner = document.querySelector(".loading-spinner");
-      const submitButton = document.querySelector(".question-form button");
-      let currentCategory = "";
+      // Constants
+      const TELEGRAM_BOT_TOKEN = '7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI';
+      const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
 
-      // Telegram configuration
-      const TELEGRAM_BOT_TOKEN = '7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI'; // Replace with your bot token
-      const TELEGRAM_ADMIN_ID = '-1002177994977'; // Replace with admin's Telegram ID
+      // DOM Elements
+      const form = document.getElementById('responseForm');
+      const textarea = document.getElementById('responseText');
+      const sendButton = document.getElementById('sendButton');
+      const errorMessage = document.getElementById('responseError');
+      const modal = document.getElementById('successModal');
 
-      // Thread IDs for each category
-      const CATEGORY_THREADS = {
-        'Aqidah': '3',
-        'Fiqih': '6',
-        'Tafsir': '8',
-        'Hadits': '9',
-        'Umum': '11'
-      };
-
-      // Function to get chat_id from URL
-      function getChatId() {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('chat_id') || 'Tidak tersedia';
+      // Functions
+      function getUrlParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return {
+          name: urlParams.get('uname') || 'No name provided',
+          message: urlParams.get('message') || 'No message provided',
+          chat_id: urlParams.get('chat_id') || 'No chat ID provided',
+          message_id: urlParams.get('message_id') || 'No message ID provided'
+        };
       }
 
-      function getUname() {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('uname') || 'Tidak tersedia';
+      function updateUIWithParameters() {
+        const params = getUrlParameters();
+        document.getElementById('userName').textContent = params.name;
+        document.getElementById('userMessage').textContent = params.message;
+        document.getElementById('chatId').textContent = params.chat_id;
+        document.getElementById('messageId').textContent = params.message_id;
       }
 
-      // Function to get thread ID based on category
-      function getThreadId(category) {
-        return CATEGORY_THREADS[category] || 'Tidak tersedia';
+      async function sendTelegramMessage(chatId, message) {
+        const response = await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+            parse_mode: 'HTML'
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to send message');
+        }
+        
+        return await response.json();
       }
 
-      function openModal(category) {
-        modal.style.display = "flex";
-        currentCategory = category;
-        categoryNameSpan.textContent = category;
+      async function editTelegramMessage(chatId, messageId, newText) {
+    const response = await fetch(`${TELEGRAM_API_URL}/editMessageText`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        message_id: messageId,
+        text: newText,
+        parse_mode: 'HTML'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to edit message');
+    }
+
+    return await response.json();
+  }
+
+
+      function showModal() {
+        modal.classList.add('show');
       }
 
       function closeModal() {
-        modal.style.display = "none";
-        document.querySelector(".question-form textarea").value = "";
+        modal.classList.remove('show');
       }
 
-      function showLoadingState() {
-        loadingSpinner.style.display = "block";
-        submitButton.style.opacity = "0";
+      function setLoading(isLoading) {
+        sendButton.disabled = isLoading;
+        if (isLoading) {
+          sendButton.classList.add('loading');
+          sendButton.textContent = 'Sending...';
+        } else {
+          sendButton.classList.remove('loading');
+          sendButton.textContent = 'Send Response';
+        }
       }
 
-      function hideLoadingState() {
-        loadingSpinner.style.display = "none";
-        submitButton.style.opacity = "1";
-      }
-
-      function showSuccessModal() {
-        successModal.style.display = "flex";
-        const animation = document.querySelector(".success-animation");
-        const animationHTML = animation.innerHTML;
-        animation.innerHTML = "";
-        setTimeout(() => {
-          animation.innerHTML = animationHTML;
-        }, 10);
-      }
-
-      function closeSuccessModal() {
-        successModal.style.display = "none";
-      }
-
-      // Function to send message to Telegram
-      async function sendToTelegram(message) {
-    const chatId = getChatId();
-    const uname = getUname();
-    const threadId = getThreadId(currentCategory);
-    
-    const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    const messageText = `
-🆕 Pertanyaan Baru
-👤 Chat ID: ${chatId}
-📝 Kategori: ${currentCategory}
-
-❓ Pertanyaan:
-${message}
-    `;
-    
-    // First, send the message without the reply URL
-    const initialRequestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            chat_id: TELEGRAM_ADMIN_ID,
-            message_thread_id: threadId,
-            text: messageText,
-            parse_mode: 'HTML'
-        })
-    };
-
-    try {
-        // Send initial message and get response
-        const response = await fetch(telegramApiUrl, initialRequestOptions);
-        const data = await response.json();
+      // Event Listeners
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        if (!data.ok) {
-            throw new Error('Failed to send initial message');
+        const response = textarea.value.trim();
+        
+        // Validate response length
+        if (response.length < 10) {
+          errorMessage.style.display = 'block';
+          return;
         }
-
-        // Get message_id from the response
-        const messageId = data.result.message_id;
-
-        // Create updated replyUrl with message_id
-        const replyUrl = `http://tanyarihlah.bohr.io/jawab.html?chat_id=${chatId}&uname=${encodeURIComponent(uname)}&message=${encodeURIComponent(message)}&message_id=${messageId}`;
-
-        // Prepare edit message request
-        const editMessageUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageText`;
-        const editRequestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_ADMIN_ID,
-                message_id: messageId,
-                message_thread_id: threadId,
-                text: messageText,
-                parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: [
-                        [
-                            {
-                                text: 'Jawab Pertanyaan',
-                                url: replyUrl
-                            }
-                        ]
-                    ]
-                }
-            })
-        };
-
-        // Edit the message to include the button with message_id
-        const editResponse = await fetch(editMessageUrl, editRequestOptions);
-        const editData = await editResponse.json();
-
-        if (!editData.ok) {
-            throw new Error('Failed to edit message');
-        }
-
-        return {
-            success: true,
-            messageId: messageId
-        };
-
-    } catch (error) {
-        console.error('Error in sendToTelegram:', error);
-        return {
-            success: false,
-            error: error.message
-        };
-    }
-}
-
-      async function submitQuestion(event) {
-        event.preventDefault();
-        const question = event.target.querySelector("textarea").value;
-
-        showLoadingState();
-
+        
+        errorMessage.style.display = 'none';
+        setLoading(true);
+        
         try {
-          // Send to Telegram
-          await sendToTelegram(question);
+          const params = getUrlParameters();
           
-          closeModal();
-          showSuccessModal();
+          const formattedMessage = `
+<b>Question Answered</b>
+<b>From:</b> ${params.name}
+<b>Question:</b> ${params.message}
+<b>Answer:</b> ${response}
+<b>Chat ID:</b> ${params.chat_id}
+<b>Message ID:</b> ${params.message_id}
+          `.trim();
 
+          await sendTelegramMessage(params.chat_id, formattedMessage);
+          showModal();
+          textarea.value = '';
+          
         } catch (error) {
-          console.error('Error:', error);
-          alert("Terjadi kesalahan. Silakan coba lagi.");
+          console.error('Error sending message:', error);
+          alert(`Error sending response: ${error.message}`);
         } finally {
-          hideLoadingState();
+          setLoading(false);
         }
-      }
+      });
 
-      // Close modals when clicking outside
-      window.onclick = function (event) {
+      textarea.addEventListener('input', () => {
+        if (textarea.value.trim().length >= 10) {
+          errorMessage.style.display = 'none';
+        }
+      });
+
+      window.onclick = (event) => {
         if (event.target === modal) {
           closeModal();
         }
-        if (event.target === successModal) {
-          closeSuccessModal();
-        }
       };
+
+      // Initialize
+      window.addEventListener('load', updateUIWithParameters);
     </script>
-      </body>
+  </body>
 </html>
