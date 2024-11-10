@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Q&A Response Interface</title>
+    <title>Admin Tanya Rihlah Menjawab</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -303,8 +303,8 @@
   <body>
     <div class="container">
       <header class="header">
-        <h1>Admin Q&A Dashboard</h1>
-        <p>Manage and respond to user questions</p>
+        <h1>Admin Menjawab</h1>
+        <p>Merespon Thalibul Ilmi Bertanya</p>
       </header>
 
       <div class="questions-container">
@@ -333,12 +333,12 @@
                 minlength="10"
               ></textarea>
               <div class="error-message" id="responseError">
-                Response must be at least 10 characters long
+                Tidak Boleh Kurang dari 5 Karakter
               </div>
             </div>
             <div class="response-actions">
               <button type="submit" class="btn btn-primary" id="sendButton">
-                Send Response
+                Kirim Jawaban
               </button>
             </div>
           </form>
@@ -352,9 +352,9 @@
           <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
           <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
         </svg>
-        <h3 style="color: #4BB543; font-size: 24px; margin-bottom: 10px;">Success!</h3>
-        <p style="color: #666; margin-bottom: 20px;">Response has been sent successfully</p>
-        <button onclick="closeModal()" class="btn btn-primary">Close</button>
+        <h3 style="color: #4BB543; font-size: 24px; margin-bottom: 10px;">Berhasil</h3>
+        <p style="color: #666; margin-bottom: 20px;">Jawaban Berhasil Terkirim Ke User</p>
+        <button onclick="closeModal()" class="btn btn-primary">Tutup</button>
       </div>
     </div>
 
@@ -469,12 +469,14 @@
           const params = getUrlParameters();
           
           const formattedMessage = `
-<b>Question Answered</b>
-<b>From:</b> ${params.name}
-<b>Question:</b> ${params.message}
-<b>Answer:</b> ${response}
-<b>Chat ID:</b> ${params.chat_id}
-<b>Message ID:</b> ${params.message_id}
+Pertanyaan Terjawab ✅
+━━━━━━━━━━━━━━━━━━
+Pertanyaan:\n${params.message}\n\n
+Jawaban:\n${response}\n
+━━━━━━━━━━━━━━━━━━
+
+📩 Copyright © 2024 Tanya Rihlah
+Dipersilakan untuk dibagikan dengan izin.
           `.trim();
 
           await sendTelegramMessage(params.chat_id, formattedMessage);
