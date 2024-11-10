@@ -22,6 +22,13 @@ function forwardMessage($chatId, $fromChatId, $messageId) {
     file_get_contents($url);
 }
 
+// Fungsi untuk membalas pesan
+function replyToMessage($chatId, $message, $replyMessageId) {
+    global $apiUrl;
+    $url = $apiUrl . "sendMessage?chat_id=$chatId&text=" . urlencode($message) . "&reply_to_message_id=$replyMessageId";
+    file_get_contents($url);
+}
+
 // Mendapatkan data dari webhook Telegram
 $update = json_decode(file_get_contents("php://input"), true);
 
@@ -34,11 +41,21 @@ if (isset($update['message'])) {
         $fromChatId = $message['chat']['id'];
         $messageId = $message['message_id'];
         
-        // Meneruskan pesan ke chat admin atau grup lain
-        forwardMessage($forwardChatId, $fromChatId, $messageId);
-        
-        // Kirim konfirmasi jika perlu
-        sendMessage($fromChatId, "Pesan Anda telah diteruskan.");
+        // Jika pesan ini adalah balasan dari admin
+        if (isset($message['reply_to_message']) && isset($message['reply_to_message']['forward_from'])) {
+            // Cek jika pesan ini adalah balasan terhadap pesan yang diteruskan
+            $originalMessageId = $message['reply_to_message']['message_id'];
+            $forwardFromChatId = $message['reply_to_message']['forward_from']['id'];
+            
+            // Mengirimkan balasan ke pengirim asli (forwardFromChatId)
+            replyToMessage($forwardFromChatId, $text, $originalMessageId);
+        } else {
+            // Meneruskan pesan ke chat admin atau grup lain
+            forwardMessage($forwardChatId, $fromChatId, $messageId);
+            
+            // Kirim konfirmasi jika perlu
+            sendMessage($fromChatId, "Pesan Anda telah diteruskan kepada admin.");
+        }
     }
 }
 ?>
