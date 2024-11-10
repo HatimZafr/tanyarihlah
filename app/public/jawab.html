@@ -330,7 +330,7 @@
                 id="responseText" 
                 placeholder="Type your response here..." 
                 required
-                minlength="10"
+                minlength="5"
               ></textarea>
               <div class="error-message" id="responseError">
                 Tidak Boleh Kurang dari 5 Karakter
@@ -457,7 +457,7 @@
         const response = textarea.value.trim();
         
         // Validate response length
-        if (response.length < 10) {
+        if (response.length < 5) {
           errorMessage.style.display = 'block';
           return;
         }
@@ -468,15 +468,15 @@
         try {
           const params = getUrlParameters();
           
-          const formattedMessage = `
+          const formattedMessage = `\n
 Pertanyaan Terjawab ✅
 ━━━━━━━━━━━━━━━━━━
-Pertanyaan:\n${params.message}\n\n
-Jawaban:\n${response}\n
+❓ Pertanyaan:\n${params.message}\n
+💡 Jawaban:\n${response}\n
 ━━━━━━━━━━━━━━━━━━
 
 📩 Copyright © 2024 Tanya Rihlah
-Dipersilakan untuk dibagikan dengan izin.
+Dipersilakan untuk dibagikan dengan izin.\n
           `.trim();
 
           await sendTelegramMessage(params.chat_id, formattedMessage);
