@@ -363,6 +363,7 @@
       const TELEGRAM_BOT_TOKEN = '7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI';
       const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
       const TELEGRAM_ADMIN_GROUP = '-1002177994977';
+      const ANSWERED_THREAD = '95';
 
       // DOM Elements
       const form = document.getElementById('responseForm');
@@ -401,6 +402,26 @@
           body: JSON.stringify({
             chat_id: chatId,
             text: message,
+            parse_mode: 'HTML'
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to send message');
+        }
+        
+        return await response.json();
+      }
+
+      async function sendTelegramMessageAnswered(chatId, message) {
+        const response = await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_ADMIN_GROUP,
+            text: ANSWERED_THREAD,
             parse_mode: 'HTML'
           })
         });
@@ -488,12 +509,39 @@ Pertanyaan Terjawab ✅
 ❓ Pertanyaan:\n${params.message}\n
 💡 Jawaban:\n${response}\n
 ━━━━━━━━━━━━━━━━━━
+Jazakumullahu Khairan  Sudah Bertanya Di Tanya Rihlah
 
 📩 Copyright © 2024 Tanya Rihlah
 Dipersilakan untuk dibagikan dengan izin.\n
           `.trim();
 
+          const formattedMessageAnswered = `\n
+✨ Tanya Rihlah - Pertanyaan Terjawab! ✨
+━━━━━━━━━━━━━━━━━━
+❓ Pertanyaan:
+${params.message}
+
+💡 Jawaban:
+${response}
+
+━━━━━━━━━━━━━━━━━━
+
+Jazakumullahu Khairan Kepada yang Sudah Bertanya Di Tanya Rihlah
+
+📚 Semoga membantu!
+Jika  Antum ada pertanyaan, jangan ragu untuk bertanya di bot @tanyarihlahbot!
+
+📱 Ikuti kami di Telegram:
+Channel: https://t.me/thalibulilmibertanya
+Bot: https://t.me/tanyarihlahbot
+
+🔗 Copyright © 2024 Tanya Rihlah
+Dipersilakan untuk dibagikan dengan izin.
+
+          `.trim();
+
           await sendTelegramMessage(params.chat_id, formattedMessage);
+          await sendTelegramMessageAnswered(params.chat_id, formattedMessageAnswered);
           await updateAdminThreadMessage(params.message_id, params.thread_id);
           showModal();
           textarea.value = '';
