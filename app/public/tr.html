@@ -549,37 +549,81 @@
 ${message}
     `;
     
-    // Define the reply URL including chat_id, message, and message_id parameters
-    const replyUrl = `http://tanyarihlah.bohr.io/jawab.html?chat_id=${chatId}&uname=${encodeURIComponent(uname)}&message=${encodeURIComponent(message)}`;
-
-    const requestOptions = {
+    // First, send the message without the reply URL
+    const initialRequestOptions = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             chat_id: TELEGRAM_ADMIN_ID,
-            message_thread_id: threadId, // Added to send to specific thread
+            message_thread_id: threadId,
             text: messageText,
-            parse_mode: 'HTML',
-            reply_markup: {
-                inline_keyboard: [
-                    [
-                        {
-                            text: 'Jawab Pertanyaan',
-                            url: replyUrl
-                        }
-                    ]
-                ]
-            }
+            parse_mode: 'HTML'
         })
     };
 
-    const response = await fetch(telegramApiUrl, requestOptions);
-    if (!response.ok) {
-        throw new Error('Failed to send message to Telegram');
+    try {
+        // Send initial message and get response
+        const response = await fetch(telegramApiUrl, initialRequestOptions);
+        const data = await response.json();
+        
+        if (!data.ok) {
+            throw new Error('Failed to send initial message');
+        }
+
+        // Get message_id from the response
+        const messageId = data.result.message_id;
+
+        // Create updated replyUrl with message_id
+        const replyUrl = `http://tanyarihlah.bohr.io/jawab.html?chat_id=${chatId}&uname=${encodeURIComponent(uname)}&message=${encodeURIComponent(message)}&message_id=${messageId}`;
+
+        // Prepare edit message request
+        const editMessageUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageText`;
+        const editRequestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_ADMIN_ID,
+                message_id: messageId,
+                message_thread_id: threadId,
+                text: messageText,
+                parse_mode: 'HTML',
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: 'Jawab Pertanyaan',
+                                url: replyUrl
+                            }
+                        ]
+                    ]
+                }
+            })
+        };
+
+        // Edit the message to include the button with message_id
+        const editResponse = await fetch(editMessageUrl, editRequestOptions);
+        const editData = await editResponse.json();
+
+        if (!editData.ok) {
+            throw new Error('Failed to edit message');
+        }
+
+        return {
+            success: true,
+            messageId: messageId
+        };
+
+    } catch (error) {
+        console.error('Error in sendToTelegram:', error);
+        return {
+            success: false,
+            error: error.message
+        };
     }
-    return response.json();
 }
 
       async function submitQuestion(event) {
