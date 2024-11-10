@@ -488,6 +488,11 @@
         return params.get('chat_id') || 'Tidak tersedia';
       }
 
+      function getUname() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('uname') || 'Tidak tersedia';
+      }
+
       // Function to get thread ID based on category
       function getThreadId(category) {
         return CATEGORY_THREADS[category] || 'Tidak tersedia';
@@ -530,38 +535,52 @@
 
       // Function to send message to Telegram
       async function sendToTelegram(message) {
-        const chatId = getChatId();
-        const threadId = getThreadId(currentCategory);
-        
-        const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-        const messageText = `
+    const chatId = getChatId();
+    const uname = getUname();
+    const threadId = getThreadId(currentCategory);
+    
+    const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    const messageText = `
 🆕 Pertanyaan Baru
 👤 Chat ID: ${chatId}
 📝 Kategori: ${currentCategory}
 
 ❓ Pertanyaan:
 ${message}
-        `;
+    `;
+    
+    // Define the reply URL including chat_id, message, and message_id parameters
+    const replyUrl = `http://tanyarihlah.bohr.io/jawab.html?chat_id=${chatId}&uname=${encodeURIComponent(uname)}&message=${encodeURIComponent(message)}`;
 
-        const requestOptions = {
-          method: 'POST',
-          headers: {
+    const requestOptions = {
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        },
+        body: JSON.stringify({
             chat_id: TELEGRAM_ADMIN_ID,
             message_thread_id: threadId, // Added to send to specific thread
             text: messageText,
-            parse_mode: 'HTML'
-          })
-        };
+            parse_mode: 'HTML',
+            reply_markup: {
+                inline_keyboard: [
+                    [
+                        {
+                            text: 'Jawab Pertanyaan',
+                            url: replyUrl
+                        }
+                    ]
+                ]
+            }
+        })
+    };
 
-        const response = await fetch(telegramApiUrl, requestOptions);
-        if (!response.ok) {
-          throw new Error('Failed to send message to Telegram');
-        }
-        return response.json();
-      }
+    const response = await fetch(telegramApiUrl, requestOptions);
+    if (!response.ok) {
+        throw new Error('Failed to send message to Telegram');
+    }
+    return response.json();
+}
 
       async function submitQuestion(event) {
         event.preventDefault();

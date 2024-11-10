@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Q&A Response Interface</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      /* Your provided styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Ubuntu;
+      }
+
+      body {
+        background: #f0f2f5;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+
+      .header {
+        text-align: center;
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        background: linear-gradient(135deg, #4f0c2b 0%, #731231 100%);
+      }
+
+      .header h1 {
+        color: white;
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+
+      .header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+      }
+
+      .questions-container {
+        display: grid;
+        gap: 16px;
+        padding: 8px;
+      }
+
+      .question-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .question-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(45deg, #4f0c2b, #731231);
+      }
+
+      .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .question-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .metadata {
+        color: #5f6368;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .question-content {
+        margin-bottom: 16px;
+      }
+
+      .question-text {
+        color: #202124;
+        font-size: 18px;
+        line-height: 1.5;
+        margin-bottom: 12px;
+      }
+
+      .user-info {
+        color: #5f6368;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .user-info i {
+        color: #4f0c2b;
+      }
+
+      .response-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #dadce0;
+      }
+
+      .response-form textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 12px;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+        font-size: 14px;
+        resize: vertical;
+      }
+
+      .response-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .btn:hover {
+        opacity: 0.9;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #4f0c2b, #731231);
+        color: white;
+      }
+
+      .btn-secondary {
+        background: #f0f2f5;
+        color: #202124;
+      }
+
+      @media (max-width: 640px) {
+        .question-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+
+        .response-actions {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>Admin Q&A Dashboard</h1>
+        <p>Manage and respond to user questions</p>
+      </header>
+
+      <div class="questions-container">
+        <div class="question-card">
+          <div class="question-header">
+            <div class="question-info">
+              <div class="user-info">
+                <i class="fas fa-user"></i>
+                <span id="userName">Loading...</span>
+              </div>
+            </div>
+          </div>
+          <div class="question-content">
+            <p class="question-text" id="userMessage">Loading...</p>
+            <p class="metadata">
+              Chat ID: <span id="chatId">Loading...</span> | 
+              Message ID: <span id="messageId">Loading...</span>
+            </p>
+          </div>
+          <div class="response-form">
+            <textarea placeholder="Type your response here..."></textarea>
+            <div class="response-actions">
+              <button class="btn btn-primary">Send Response</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Function to get URL parameters
+      function getUrlParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return {
+          name: urlParams.get('uname') || 'No name provided',
+          message: urlParams.get('message') || 'No message provided',
+          chat_id: urlParams.get('chat_id') || 'No chat ID provided',
+          message_id: urlParams.get('message_id') || 'No message ID provided'
+        };
+      }
+
+      // Function to update the UI with URL parameters
+      function updateUIWithParameters() {
+        const params = getUrlParameters();
+        
+        // Update the UI elements
+        document.getElementById('userName').textContent = params.name;
+        document.getElementById('userMessage').textContent = params.message;
+        document.getElementById('chatId').textContent = params.chat_id;
+        document.getElementById('messageId').textContent = params.message_id;
+      }
+
+      // Call the update function when the page loads
+      window.addEventListener('load', updateUIWithParameters);
+
+      // Add response functionality (demo)
+      document.querySelector(".response-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const textarea = e.target.querySelector("textarea");
+        if (textarea.value.trim()) {
+          // Here you would typically send the response to your backend
+          const params = getUrlParameters();
+          console.log('Sending response:', {
+            response: textarea.value,
+            chat_id: params.chat_id,
+            message_id: params.message_id
+          });
+          alert("Response submitted!");
+          textarea.value = "";
+        }
+      });
+    </script>
+  </body>
+</html>
