@@ -421,7 +421,8 @@
           },
           body: JSON.stringify({
             chat_id: TELEGRAM_ADMIN_GROUP,
-            text: ANSWERED_THREAD,
+            message_thread_id: ANSWERED_THREAD,
+            text: message,
             parse_mode: 'HTML'
           })
         });
@@ -541,8 +542,8 @@ Dipersilakan untuk dibagikan dengan izin.
           `.trim();
 
           await sendTelegramMessage(params.chat_id, formattedMessage);
-          await sendTelegramMessageAnswered(params.chat_id, formattedMessageAnswered);
           await updateAdminThreadMessage(params.message_id, params.thread_id);
+          await sendTelegramMessageAnswered(TELEGRAM_ADMIN_GROUP, formattedMessageAnswered);
           showModal();
           textarea.value = '';
           
