@@ -362,6 +362,7 @@
       // Constants
       const TELEGRAM_BOT_TOKEN = '7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI';
       const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
+      const TELEGRAM_ADMIN_GROUP = '-1002177994977';
 
       // DOM Elements
       const form = document.getElementById('responseForm');
@@ -411,26 +412,37 @@
         return await response.json();
       }
 
-      async function editTelegramMessage(chatId, messageId, newText) {
-    const response = await fetch(`${TELEGRAM_API_URL}/editMessageText`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        chat_id: chatId,
-        message_id: messageId,
-        text: newText,
-        parse_mode: 'HTML'
-      })
-    });
+      async function updateAdminThreadMessage(messageId, threadId) {
+        const response = await fetch(`${TELEGRAM_API_URL}/editMessageReplyMarkup`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_ADMIN_GROUP,
+            message_id: messageId,
+            message_thread_id: threadId,
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: 'Sudah Dijawab',
+                    callback_data: 'answered'
+                  }
+                ]
+              ]
+            }
+          })
+        });
 
-    if (!response.ok) {
-      throw new Error('Failed to edit message');
-    }
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Failed to update admin message: ${errorData.description}`);
+        }
 
-    return await response.json();
-  }
+        return await response.json();
+      }
+
 
 
       function showModal() {
@@ -482,6 +494,7 @@ Dipersilakan untuk dibagikan dengan izin.\n
           `.trim();
 
           await sendTelegramMessage(params.chat_id, formattedMessage);
+          await updateAdminThreadMessage(params.message_id, params.thread_id);
           showModal();
           textarea.value = '';
           
