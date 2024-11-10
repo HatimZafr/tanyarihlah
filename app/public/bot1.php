@@ -4,6 +4,20 @@ $botToken = '7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI';
 $apiUrl = "https://api.telegram.org/bot$botToken/";
 
 // Fungsi untuk mengirim balasan ke pengguna berdasarkan chat_id
+// Fungsi untuk mengambil daftar admin dari grup
+function getAdminList($chatId) {
+    global $apiUrl;
+
+    $response = file_get_contents($apiUrl . "getChatAdministrators?chat_id=" . $chatId);
+    
+    if ($response === FALSE) {
+        throw new Exception('Gagal mengambil daftar admin grup');
+    }
+
+    return json_decode($response, true)['result'];
+}
+
+// Fungsi untuk mengirim balasan ke pengguna
 function sendReplyToUser($adminMessage, $userChatId) {
     global $apiUrl;
     $data = array(
@@ -34,9 +48,13 @@ function sendReplyToUser($adminMessage, $userChatId) {
 // Fungsi untuk menangani balasan admin di grup
 function handleAdminReply($update) {
     $message = $update->message;
-    
-    // Periksa apakah pesan ini adalah balasan
-    if (isset($message->reply_to_message)) {
+    $chatId = $message->chat->id;
+
+    // Dapatkan daftar admin grup
+    $admins = getAdminList($chatId);
+
+    // Periksa apakah pesan ini adalah balasan dan pengirim adalah admin
+    if (isset($message->reply_to_message) && in_array($message->from->id, array_column($admins, 'user.id'))) {
         $replyToMessage = $message->reply_to_message;
         
         // Periksa apakah pesan yang dibalas berasal dari pengguna (chat_id)
