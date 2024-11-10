@@ -377,7 +377,8 @@
           name: urlParams.get('uname') || 'No name provided',
           message: urlParams.get('message') || 'No message provided',
           chat_id: urlParams.get('chat_id') || 'No chat ID provided',
-          message_id: urlParams.get('message_id') || 'No message ID provided'
+          message_id: urlParams.get('message_id') || 'No message ID provided',
+          thread_id: urlParams.get('thread_id') || 'No thread ID provided'
         };
       }
 
@@ -387,6 +388,7 @@
         document.getElementById('userMessage').textContent = params.message;
         document.getElementById('chatId').textContent = params.chat_id;
         document.getElementById('messageId').textContent = params.message_id;
+        document.getElementById('threadId').textContent = params.thread_id;
       }
 
       async function sendTelegramMessage(chatId, message) {
