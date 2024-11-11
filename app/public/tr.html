@@ -533,6 +533,10 @@
         successModal.style.display = "none";
       }
 
+function closeWebApp() {
+    window.Telegram.WebApp.close();
+}
+
       // Function to send message to Telegram
       async function sendToTelegram(message) {
     const chatId = getChatId();
@@ -654,6 +658,7 @@ ${message}
         }
         if (event.target === successModal) {
           closeSuccessModal();
+closeWebApp();
         }
       };
     </script>
