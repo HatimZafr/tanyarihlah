@@ -614,6 +614,34 @@ ${message}
             throw new Error('Failed to edit message');
         }
 
+// Send confirmation to the user that their question has been sent
+        const userMessageText = `
+Pertanyaan Antum sudah dikirim ke Tanya Rihlah. Kami akan segera menanggapi dan menyampaikannya.
+      
+❓ Pertanyaan:
+${message}
+        `;
+
+        const userRequestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: userMessageText,
+                parse_mode: 'HTML'
+            })
+        };
+
+        // Send the confirmation message to the user
+        const userResponse = await fetch(telegramApiUrl, userRequestOptions);
+        const userData = await userResponse.json();
+
+        if (!userData.ok) {
+            throw new Error('Failed to send confirmation to user');
+        }
+
         return {
             success: true,
             messageId: messageId
