@@ -462,6 +462,8 @@
     </div>
 
     <script>
+window.Telegram.WebApp.ready();
+
       const modal = document.getElementById("questionModal");
       const successModal = document.getElementById("successModal");
       const categoryNameSpan = document.getElementById("categoryName");
@@ -531,11 +533,14 @@
 
       function closeSuccessModal() {
         successModal.style.display = "none";
-      }
+closeWebApp(); // Tutup Web App setelah modal sukses ditutup
+  }
 
-function closeWebApp() {
+  function closeWebApp() {
     window.Telegram.WebApp.close();
-}
+  }
+      
+
 
       // Function to send message to Telegram
       async function sendToTelegram(message) {
@@ -658,7 +663,6 @@ ${message}
         }
         if (event.target === successModal) {
           closeSuccessModal();
-closeWebApp();
         }
       };
     </script>
