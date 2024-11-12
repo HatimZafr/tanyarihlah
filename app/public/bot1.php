@@ -73,6 +73,71 @@ function editMessageCaption($chatId, $messageId, $newCaption, $keyboard = null) 
     file_get_contents($url, false, $context);
 }
 
+function forwardMessage($chatId, $threadId, $messageId) {
+    global $apiUrl;
+    
+    $data = array(
+        'chat_id' => $chatId,
+        'message_thread_id' => $threadId,
+        'from_chat_id' => $chatId,
+        'message_id' => $messageId
+    );
+    
+    $options = array(
+        'http' => array(
+            'header' => "Content-type: application/json\r\n",
+            'method' => 'POST',
+            'content' => json_encode($data)
+        )
+    );
+    
+    $context = stream_context_create($options);
+    return file_get_contents($apiUrl . "forwardMessage", false, $context);
+}
+
+function answerCallbackQuery($callbackQueryId, $text) {
+    global $apiUrl;
+    
+    $data = array(
+        'callback_query_id' => $callbackQueryId,
+        'text' => $text,
+        'show_alert' => true
+    );
+    
+    $options = array(
+        'http' => array(
+            'header' => "Content-type: application/json\r\n",
+            'method' => 'POST',
+            'content' => json_encode($data)
+        )
+    );
+    
+    $context = stream_context_create($options);
+    return file_get_contents($apiUrl . "answerCallbackQuery", false, $context);
+}
+
+function editMessageReplyMarkup($chatId, $messageId, $keyboard) {
+    global $apiUrl;
+    
+    $data = array(
+        'chat_id' => $chatId,
+        'message_id' => $messageId,
+        'reply_markup' => json_encode($keyboard)
+    );
+    
+    $options = array(
+        'http' => array(
+            'header' => "Content-type: application/json\r\n",
+            'method' => 'POST',
+            'content' => json_encode($data)
+        )
+    );
+    
+    $context = stream_context_create($options);
+    return file_get_contents($apiUrl . "editMessageReplyMarkup", false, $context);
+}
+
+
 function showCategorySoal($chatId, $messageId = null) {
     $text = "📜 Peraturan Sederhana Bertanya kepada Masyaikh:
 
@@ -104,50 +169,6 @@ Klik tombol Lanjutkan Untuk Bertanya";
     editMessageCaption($chatId, $messageId, $text, $keyboard);
 }
 
-$adminGroupId = "-123456789"; // Ganti dengan ID grup admin Anda
-$adminThreadId = "123456"; // Ganti dengan ID thread di grup admin Anda
-
-function action_accept($chatId, $messageId,) {
-    global $adminGroupId, $adminThreadId;
-
-    // Dapatkan informasi pesan pengguna
-    $userMessageUrl = "https://t.me/c/$chatId/$messageId";
-
-    // Buat tombol inline keyboard yang mengarah ke pesan pengguna
-    $keyboard = array(
-        array(
-            array(
-                "text" => "Lihat Pesan Anda",
-                "url" => $userMessageUrl
-            )
-        )
-    );
-
-    // Teruskan pesan ke thread di grup admin
-    forwardMessageToThread($adminGroupId, $adminThreadId, $chatId, $messageId);
-
-    
-}
-
-function forwardMessageToThread($chatId, $threadId, $fromChatId, $messageId) {
-    global $apiUrl;
-    $data = array(
-        'chat_id' => $chatId,
-        'from_chat_id' => $fromChatId,
-        'message_id' => $messageId,
-        'reply_to_message_id' => $threadId
-    );
-
-    $options = array(
-        'http' => array(
-            'header'  => "Content-type: application/json\r\n",
-            'method'  => 'POST',
-            'content' => json_encode($data)
-        )
-    );
-    $context = stream_context_create($options);
-    $response = file_get_contents($apiUrl . "forwardMessage", false, $context);
-}
 
 
 
@@ -269,15 +290,45 @@ function handleCallbackQuery($callbackQuery) {
         return;
     }
 
+    // Handle action_accept
+    if ($data === 'action_accept') {
+        $message = $callbackQuery->message;
+        $threadId = $message->message_thread_id;
+        
+        // ID thread tujuan untuk forward
+        $targetThreadId = "TARGET_THREAD_ID"; // Ganti dengan ID thread tujuan
+        
+        // Forward pesan ke thread tujuan
+        forwardMessage($chatId, $targetThreadId, $messageId);
+        
+        // Konfirmasi callback
+        answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan diteruskan");
+        
+        // Update tombol inline keyboard
+        $keyboard = array(
+            'inline_keyboard' => array(
+                array(
+                    array(
+                        'text' => '✅ Sudah Disetujui',
+                        'callback_data' => 'already_accepted'
+                    ),
+                    // Pertahankan tombol "Jawab Pertanyaan" dari keyboard asli
+                    $message->reply_markup->inline_keyboard[0][1]
+                )
+            )
+        );
+        
+        editMessageReplyMarkup($chatId, $messageId, $keyboard);
+        return;
+    }
+
     switch($data) {
         
         case "show_category_soal":
             showCategorySoal($chatId, $messageId);
             break;
 
-        case "action_accept":
-    action_accept($chatId, $messageId, );
-    break;
+        
             
         case "show_masyaikh_list":
             $text = "Antum Dapat Melihat Biografi Masyaikh secara Ringkas di sini, Namun Fitur ini Sedang Dalam Tahap Pengembangan.";
