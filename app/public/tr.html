@@ -454,7 +454,9 @@
           </div>
         </div>
         <h3 class="success-message">Pertanyaan Terkirim!</h3>
-        <p class="success-subtitle">Jazakumullahu khairan atas pertanyaan Antum</p>
+        <p class="success-subtitle">
+          Jazakumullahu khairan atas pertanyaan Antum
+        </p>
         <button onclick="closeSuccessModal()" class="success-button">
           Kembali
         </button>
@@ -470,32 +472,33 @@
       let currentCategory = "";
 
       // Telegram configuration
-      const TELEGRAM_BOT_TOKEN = '7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI'; // Replace with your bot token
-      const TELEGRAM_ADMIN_ID = '-1002177994977'; // Replace with admin's Telegram ID
+      const TELEGRAM_BOT_TOKEN =
+        "7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI"; // Replace with your bot token
+      const TELEGRAM_ADMIN_ID = "-1002177994977"; // Replace with admin's Telegram ID
 
       // Thread IDs for each category
       const CATEGORY_THREADS = {
-        'Aqidah': '3',
-        'Fiqih': '6',
-        'Tafsir': '8',
-        'Hadits': '9',
-        'Umum': '11'
+        Aqidah: "3",
+        Fiqih: "6",
+        Tafsir: "8",
+        Hadits: "9",
+        Umum: "11",
       };
 
       // Function to get chat_id from URL
       function getChatId() {
         const params = new URLSearchParams(window.location.search);
-        return params.get('chat_id') || 'Tidak tersedia';
+        return params.get("chat_id") || "Tidak tersedia";
       }
 
       function getUname() {
         const params = new URLSearchParams(window.location.search);
-        return params.get('uname') || 'Tidak tersedia';
+        return params.get("uname") || "Tidak tersedia";
       }
 
       // Function to get thread ID based on category
       function getThreadId(category) {
-        return CATEGORY_THREADS[category] || 'Tidak tersedia';
+        return CATEGORY_THREADS[category] || "Tidak tersedia";
       }
 
       function openModal(category) {
@@ -531,18 +534,16 @@
 
       function closeSuccessModal() {
         successModal.style.display = "none";
-  }
-      
-
+      }
 
       // Function to send message to Telegram
       async function sendToTelegram(message) {
-    const chatId = getChatId();
-    const uname = getUname();
-    const threadId = getThreadId(currentCategory);
-    
-    const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    const messageText = `
+        const chatId = getChatId();
+        const uname = getUname();
+        const threadId = getThreadId(currentCategory);
+
+        const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        const messageText = `
 🆕 Pertanyaan Baru
 👤 Chat ID: ${chatId}
 📝 Kategori: ${currentCategory}
@@ -550,114 +551,121 @@
 ❓ Pertanyaan:
 ${message}
     `;
-    
-    // First, send the message without the reply URL
-    const initialRequestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+
+        // First, send the message without the reply URL
+        const initialRequestOptions = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
             chat_id: TELEGRAM_ADMIN_ID,
             message_thread_id: threadId,
             text: messageText,
-            parse_mode: 'HTML'
-        })
-    };
-
-    try {
-        // Send initial message and get response
-        const response = await fetch(telegramApiUrl, initialRequestOptions);
-        const data = await response.json();
-        
-        if (!data.ok) {
-            throw new Error('Failed to send initial message');
-        }
-
-        // Get message_id from the response
-        const messageId = data.result.message_id;
-
-        // Create updated replyUrl with message_id
-        const replyUrl = `http://tanyarihlah.bohr.io/jawab.html?chat_id=${chatId}&uname=${encodeURIComponent(uname)}&message=${encodeURIComponent(message)}&message_id=${messageId}&thread_id=${threadId}`;
-
-        // Prepare edit message request
-        const editMessageUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageText`;
-        const editRequestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_ADMIN_ID,
-                message_id: messageId,
-                message_thread_id: threadId,
-                text: messageText,
-                parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: [
-                        [
-                            {
-                                text: 'Jawab Pertanyaan',
-                                url: replyUrl
-                            }
-                        ]
-                    ]
-                }
-            })
+            parse_mode: "HTML",
+          }),
         };
 
-        // Edit the message to include the button with message_id
-        const editResponse = await fetch(editMessageUrl, editRequestOptions);
-        const editData = await editResponse.json();
+        try {
+          // Send initial message and get response
+          const response = await fetch(telegramApiUrl, initialRequestOptions);
+          const data = await response.json();
 
-        if (!editData.ok) {
-            throw new Error('Failed to edit message');
-        }
+          if (!data.ok) {
+            throw new Error("Failed to send initial message");
+          }
 
-// Send confirmation to the user that their question has been sent
-        const userMessageText = `
-📬 Pertanyaan Antum sudah dikirim ke Tanya Rihlah!
-✨
+          // Get message_id from the response
+          const messageId = data.result.message_id;
+
+          // Create updated replyUrl with message_id
+          const replyUrl = `http://tanyarihlah.bohr.io/jawab.html?chat_id=${chatId}&uname=${encodeURIComponent(
+            uname
+          )}&message=${encodeURIComponent(
+            message
+          )}&message_id=${messageId}&thread_id=${threadId}`;
+
+          // Prepare edit message request
+          const editMessageUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageText`;
+          const editRequestOptions = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              chat_id: TELEGRAM_ADMIN_ID,
+              message_id: messageId,
+              message_thread_id: threadId,
+              text: messageText,
+              parse_mode: "HTML",
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: "👍 Setujui",
+                      callback_data: "action_accept",
+                    },
+                    {
+                      text: "✍️ Jawab Pertanyaan",
+                      url: replyUrl,
+                    },
+                  ],
+                ],
+              },
+            }),
+          };
+
+          // Edit the message to include the button with message_id
+          const editResponse = await fetch(editMessageUrl, editRequestOptions);
+          const editData = await editResponse.json();
+
+          if (!editData.ok) {
+            throw new Error("Failed to edit message");
+          }
+
+          // Send confirmation to the user that their question has been sent
+          const userMessageText = `
+📬 Pertanyaan Antum telah kami terima. Jazakumullahu Khairan sudah berpartisipasi!
 
 ❓ Pertanyaan:
 ${message}
 
-Jazakumullahu Khairan sudah berpartisipasi! 📚 Kami akan segera menanggapi,menyampaikannya dan memberikan jawaban terbaik untuk Antum! 🚀💡
+Butuh beberapa saat untuk menjawab dan menyajikannya di kanal, pantau dan ikuti terus postingan kami di @thalibulilmibertanya ya ... 
+✨
         `;
 
-        const userRequestOptions = {
-            method: 'POST',
+          const userRequestOptions = {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                chat_id: chatId,
-                text: userMessageText,
-                parse_mode: 'HTML'
-            })
-        };
+              chat_id: chatId,
+              text: userMessageText,
+              parse_mode: "HTML",
+            }),
+          };
 
-        // Send the confirmation message to the user
-        const userResponse = await fetch(telegramApiUrl, userRequestOptions);
-        const userData = await userResponse.json();
+          // Send the confirmation message to the user
+          const userResponse = await fetch(telegramApiUrl, userRequestOptions);
+          const userData = await userResponse.json();
 
-        if (!userData.ok) {
-            throw new Error('Failed to send confirmation to user');
-        }
+          if (!userData.ok) {
+            throw new Error("Failed to send confirmation to user");
+          }
 
-        return {
+          return {
             success: true,
-            messageId: messageId
-        };
-
-    } catch (error) {
-        console.error('Error in sendToTelegram:', error);
-        return {
+            messageId: messageId,
+          };
+        } catch (error) {
+          console.error("Error in sendToTelegram:", error);
+          return {
             success: false,
-            error: error.message
-        };
-    }
-}
+            error: error.message,
+          };
+        }
+      }
 
       async function submitQuestion(event) {
         event.preventDefault();
@@ -668,12 +676,11 @@ Jazakumullahu Khairan sudah berpartisipasi! 📚 Kami akan segera menanggapi,men
         try {
           // Send to Telegram
           await sendToTelegram(question);
-          
+
           closeModal();
           showSuccessModal();
-
         } catch (error) {
-          console.error('Error:', error);
+          console.error("Error:", error);
           alert("Terjadi kesalahan. Silakan coba lagi.");
         } finally {
           hideLoadingState();
@@ -690,5 +697,5 @@ Jazakumullahu Khairan sudah berpartisipasi! 📚 Kami akan segera menanggapi,men
         }
       };
     </script>
-      </body>
+  </body>
 </html>
