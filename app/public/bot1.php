@@ -296,7 +296,7 @@ function handleCallbackQuery($callbackQuery) {
         $threadId = $message->message_thread_id;
         
         // ID thread tujuan untuk forward
-        $targetThreadId = "TARGET_THREAD_ID"; // Ganti dengan ID thread tujuan
+        $targetThreadId = "152"; // Ganti dengan ID thread tujuan
         
         // Forward pesan ke thread tujuan
         forwardMessage($chatId, $targetThreadId, $messageId);
