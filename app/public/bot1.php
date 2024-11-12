@@ -126,30 +126,44 @@ function handleMessage($update) {
 
     if ($text == "/start") {
         $photoUrl = "https://tanyarihlah.bohr.io/images/image.png";
-        $welcomeText = "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
+        $welcomeText = "﷽ 
 
 Bot Thalibul Ilmi Bertanya
 
-Bot ini dibuat untuk membantu menyampaikan pertanyaan Anda kepada para masyaikh yang kami temui, insyaAllah. Setiap pertanyaan yang berasal dari rasa ingin tahu, insyaAllah akan dijawab oleh para ulama yang kompeten.
+Bot ini dibuat untuk membantu menyampaikan pertanyaan Antum kepada para masyaikh yang kami temui, insyaallah. Tulis pertanyaan Antum dan nantikan jawabannya di kanal @thalibulilmibertanya...
 
-🔹 Cara Kerja Bot:
+🔹 Fitur Bot:
 
-1️⃣ Mengumpulkan pertanyaan dari pengikut Program Rihlah Thalabul Ilmi untuk disampaikan langsung kepada masyaikh.
-2️⃣ Menyajikan jawaban dari para masyaikh dalam bentuk audio dan ringkasan jawaban.
+Tanya Masyaikh
+- Tanyakan permasalahan seputar agama untuk disampaikan kepada para masyaikh.
+- Jawaban akan kami unggah di kanal @thalibulilmibertanya agar semua orang bisa mendapatkan faedahnya.
 
-❓ Silakan kirim pertanyaan Anda melalui bot ini dengan cara klik tombol Bertanya, dan kami akan bantu menyampaikannya.
+Tanya Admin
+- Tanyakan permasalahan seputar serba-serbi Program Rihlah Thalibul Ilmi
+- Pertanyaan akan kami jawab secara pribadi
 
-Semoga Allah memberikan kita ilmu yang bermanfaat.";
+Saran dan Masukan
+- Bantu kami untuk terus berkembang dengan memberi saran dan masukan yang membangun
+
+Kontak Kami
+- Informasi seputar media dakwah para masyaikh
+
+Mengingat banyaknya pertanyaan yang masuk, mohon maaf jika kami terlambat merespon ya ... Jika Antum punya pertanyaan yang butuh jawaban cepat, kami sarankan untuk bertanya kepada asatidzah setempat secara langsung..
+
+Semoga kami bisa terus mengembangkan layanan kami menjadi lebih baik ...";
         
 $keyboard = array(
     array(
-        array("text" => "❓ Bertanya", "callback_data" => "show_category_soal")
+        array("text" => "❓ Tanya Masyaikh", "callback_data" => "show_category_soal")
     ),
     array(
-        array("text" => "📖 Biografi Masyaikh", "callback_data" => "show_masyaikh_list")
+        array("text" => "💬 Tanya Admin", "url" => "https://t.me/RihlahThalabulIlmiCS_bot")
     ),
     array(
-        array("text" => "🤖 Tentang Bot", "callback_data" => "about_bot")
+        array("text" => "💡 Saran dan Masukan", "url" => "https://t.me/RihlahThalabulIlmiCS_bot")
+    ),
+    array(
+        array("text" => "📞 Kontak Kami", "callback_data" => "about_bot")
     )
 );
 
@@ -235,30 +249,44 @@ function handleCallbackQuery($callbackQuery) {
             
         case "back_to_start":
             $photoUrl = "https://tanyarihlah.bohr.io/images/image.png";
-            $welcomeText = "بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ
+            $welcomeText = "﷽ 
 
 Bot Thalibul Ilmi Bertanya
 
-Bot ini dibuat untuk membantu menyampaikan pertanyaan Anda kepada para masyaikh yang kami temui, insyaAllah. Setiap pertanyaan yang berasal dari rasa ingin tahu, insyaAllah akan dijawab oleh para ulama yang kompeten.
+Bot ini dibuat untuk membantu menyampaikan pertanyaan Antum kepada para masyaikh yang kami temui, insyaallah. Tulis pertanyaan Antum dan nantikan jawabannya di kanal @thalibulilmibertanya...
 
-🔹 Cara Kerja Bot:
+🔹 Fitur Bot:
 
-1️⃣ Mengumpulkan pertanyaan dari pengikut Program Rihlah Thalabul Ilmi untuk disampaikan langsung kepada masyaikh.
-2️⃣ Menyajikan jawaban dari para masyaikh dalam bentuk audio dan ringkasan jawaban.
+Tanya Masyaikh
+- Tanyakan permasalahan seputar agama untuk disampaikan kepada para masyaikh.
+- Jawaban akan kami unggah di kanal @thalibulilmibertanya agar semua orang bisa mendapatkan faedahnya.
 
-❓ Silakan kirim pertanyaan Anda melalui bot ini dengan cara klik tombol Bertanya, dan kami akan bantu menyampaikannya.
+Tanya Admin
+- Tanyakan permasalahan seputar serba-serbi Program Rihlah Thalibul Ilmi
+- Pertanyaan akan kami jawab secara pribadi
 
-Semoga Allah memberikan kita ilmu yang bermanfaat.";
+Saran dan Masukan
+- Bantu kami untuk terus berkembang dengan memberi saran dan masukan yang membangun
 
+Kontak Kami
+- Informasi seputar media dakwah para masyaikh
+
+Mengingat banyaknya pertanyaan yang masuk, mohon maaf jika kami terlambat merespon ya ... Jika Antum punya pertanyaan yang butuh jawaban cepat, kami sarankan untuk bertanya kepada asatidzah setempat secara langsung..
+
+Semoga kami bisa terus mengembangkan layanan kami menjadi lebih baik ...";
+        
 $keyboard = array(
     array(
-        array("text" => "❓ Bertanya", "callback_data" => "show_category_soal")
+        array("text" => "❓ Tanya Masyaikh", "callback_data" => "show_category_soal")
     ),
     array(
-        array("text" => "📖 Biografi Masyaikh", "callback_data" => "show_masyaikh_list")
+        array("text" => "💬 Tanya Admin", "url" => "https://t.me/RihlahThalabulIlmiCS_bot")
     ),
     array(
-        array("text" => "🤖 Tentang Bot", "callback_data" => "about_bot")
+        array("text" => "💡 Saran dan Masukan", "url" => "https://t.me/RihlahThalabulIlmiCS_bot")
+    ),
+    array(
+        array("text" => "📞 Kontak Kami", "callback_data" => "about_bot")
     )
 );
             editMessageCaption($chatId, $messageId, $welcomeText, $keyboard);
