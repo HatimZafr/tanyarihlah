@@ -293,34 +293,71 @@ function handleCallbackQuery($callbackQuery) {
     // Handle action_accept
     if ($data === 'action_accept') {
         $message = $callbackQuery->message;
-        $threadId = $message->message_thread_id;
-        
+        $chatId = $message->chat->id;
+        $messageId = $message->message_id;
+    
         // ID thread tujuan untuk forward
         $targetThreadId = "152"; // Ganti dengan ID thread tujuan
-        
-        // Forward pesan ke thread tujuan
-        forwardMessage($chatId, $targetThreadId, $messageId);
-        
-        // Konfirmasi callback
-        answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan diteruskan");
-        
-        // Update tombol inline keyboard
-        $keyboard = array(
-            'inline_keyboard' => array(
+    
+        // Forward pesan ke thread tujuan dan tangkap ID pesan yang diteruskan
+        // Forward message and check if response is valid
+$forwardedMessage = forwardMessage($chatId, $targetThreadId, $messageId);
+
+if ($forwardedMessage === false) {
+    // Handle error (e.g., log it, send error message to admin, etc.)
+    answerCallbackQuery($callbackQuery->id, "Failed to forward the message. Please try again.");
+    return;
+}
+
+$forwardedMessageObj = json_decode($forwardedMessage);
+
+// Check if decoding succeeded and message_id exists
+if ($forwardedMessageObj && isset($forwardedMessageObj->message_id)) {
+    $forwardedMessageId = $forwardedMessageObj->message_id;
+
+    // Continue with the rest of the code
+    $forwardedMessageLink = "https://t.me/c/{$chatId}/{$forwardedMessageId}";
+
+    // Confirm callback
+    answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan diteruskan");
+
+    // Create inline keyboard button for forwarded message
+    $forwardedKeyboard = array(
+        'inline_keyboard' => array(
+            array(
                 array(
-                    array(
-                        'text' => '✅ Sudah Disetujui',
-                        'callback_data' => 'already_accepted'
-                    ),
-                    // Pertahankan tombol "Jawab Pertanyaan" dari keyboard asli
-                    $message->reply_markup->inline_keyboard[0][1]
+                    'text' => 'Lihat Pesan Diteruskan',
+                    'url' => $forwardedMessageLink
                 )
             )
-        );
-        
-        editMessageReplyMarkup($chatId, $messageId, $keyboard);
-        return;
+        )
+    );
+
+    // Add inline keyboard to forwarded message in thread 152
+    editMessageReplyMarkup($chatId, $forwardedMessageId, $forwardedKeyboard);
+
+    // Update inline keyboard on original message to show "Approved" status
+    $keyboard = array(
+        'inline_keyboard' => array(
+            array(
+                array(
+                    'text' => '✅ Sudah Disetujui',
+                    'callback_data' => 'already_accepted'
+                ),
+                $callbackQuery->message->reply_markup->inline_keyboard[0][1] // Retain "Jawab Pertanyaan" button
+            )
+        )
+    );
+
+    // Update inline keyboard on original message
+    editMessageReplyMarkup($chatId, $messageId, $keyboard);
+
+} else {
+    // Handle case where message forwarding failed or no message_id was returned
+    answerCallbackQuery($callbackQuery->id, "Failed to retrieve forwarded message ID.");
+}
     }
+    
 
     switch($data) {
         
