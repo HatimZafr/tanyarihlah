@@ -104,8 +104,8 @@ Klik tombol Lanjutkan Untuk Bertanya";
     editMessageCaption($chatId, $messageId, $text, $keyboard);
 }
 
-$adminGroupId = "-123456789"; // Ganti dengan ID grup admin Anda
-$adminThreadId = "123456"; // Ganti dengan ID thread di grup admin Anda
+$adminGroupId = "-1002177994977"; // Ganti dengan ID grup admin Anda
+$adminThreadId = "152"; // Ganti dengan ID thread di grup admin Anda
 
 function action_accept($chatId, $messageId,) {
     global $adminGroupId, $adminThreadId;
