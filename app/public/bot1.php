@@ -300,66 +300,70 @@ function handleCallbackQuery($callbackQuery) {
         $targetThreadId = "152"; // Ganti dengan ID thread tujuan
     
         // Forward pesan ke thread tujuan dan tangkap ID pesan yang diteruskan
-        // Forward message and check if response is valid
-// Forward pesan dan cek apakah respons valid
-$forwardedMessage = forwardMessage($chatId, $targetThreadId, $messageId);
-
-// Cek apakah forwardMessage berhasil
-if ($forwardedMessage === false) {
-    // Tangani error (misalnya, tampilkan pesan error atau log error)
-    answerCallbackQuery($callbackQuery->id, "Gagal meneruskan pesan. Silakan coba lagi.");
-    return;
-}
-
-// Decode respons JSON dari API Telegram
-$forwardedMessageObj = json_decode($forwardedMessage);
-
-// Cek apakah respons berhasil didecode dan apakah terdapat message_id
-if ($forwardedMessageObj && isset($forwardedMessageObj->result->message_id)) {
-    // Dapatkan message_id dari respons yang valid
-    $forwardedMessageId = $forwardedMessageObj->result->message_id;
-
-    // Lanjutkan proses seperti biasa
-    $forwardedMessageLink = "https://t.me/c/{$chatId}/{$forwardedMessageId}";
-
-    // Konfirmasi callback ke pengguna
-    answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan diteruskan");
-
-    // Buat tombol inline untuk pesan yang diteruskan
-    $forwardedKeyboard = array(
-        'inline_keyboard' => array(
-            array(
-                array(
-                    'text' => 'Lihat Pesan Diteruskan',
-                    'url' => $forwardedMessageLink
+        $forwardedMessage = forwardMessage($chatId, $targetThreadId, $messageId);
+    
+        // Cek apakah forwardMessage berhasil
+        if ($forwardedMessage === false) {
+            // Tangani error (misalnya, tampilkan pesan error atau log error)
+            answerCallbackQuery($callbackQuery->id, "Gagal meneruskan pesan. Silakan coba lagi.");
+            return;
+        }
+    
+        // Decode respons JSON dari API Telegram
+        $forwardedMessageObj = json_decode($forwardedMessage);
+    
+        // Cek apakah respons berhasil didecode dan apakah terdapat message_id
+        if ($forwardedMessageObj && isset($forwardedMessageObj->result->message_id)) {
+            // Dapatkan message_id dari respons yang valid
+            $forwardedMessageId = $forwardedMessageObj->result->message_id;
+    
+            // ID pesan sebelumnya dalam thread asal
+            // Misalnya kita ambil pesan sebelumnya dengan mengurangi 1 dari messageId
+            $previousMessageId = $messageId - 1;  // Asumsi pesan sebelumnya adalah messageId - 1
+    
+            // Buat URL ke pesan sebelumnya dalam thread asal
+            $previousMessageLink = "https://t.me/c/{$chatId}/{$previousMessageId}";
+    
+            // Konfirmasi callback ke pengguna
+            answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan diteruskan");
+    
+            // Buat tombol inline untuk pesan yang diteruskan
+            $forwardedKeyboard = array(
+                'inline_keyboard' => array(
+                    array(
+                        array(
+                            'text' => 'Lihat Pesan Diteruskan',
+                            'url' => $previousMessageLink  // Link ke pesan sebelumnya dalam thread asal
+                        )
+                    )
                 )
-            )
-        )
-    );
-
-    // Tambahkan tombol inline ke pesan yang diteruskan di thread tujuan
-    editMessageReplyMarkup($chatId, $forwardedMessageId, $forwardedKeyboard);
-
-    // Update tombol inline di pesan asli untuk menunjukkan status "Sudah Disetujui"
-    $keyboard = array(
-        'inline_keyboard' => array(
-            array(
-                array(
-                    'text' => '✅ Sudah Disetujui',
-                    'callback_data' => 'already_accepted'
-                ),
-                $callbackQuery->message->reply_markup->inline_keyboard[0][1] // Pertahankan tombol "Jawab Pertanyaan"
-            )
-        )
-    );
-
-    // Update tombol inline di pesan asli
-    editMessageReplyMarkup($chatId, $messageId, $keyboard);
-
-} else {
-    // Tangani kasus di mana message_id tidak ditemukan atau ada error
-    answerCallbackQuery($callbackQuery->id, "Gagal mengambil ID pesan yang diteruskan. Mungkin ada masalah dengan API Telegram.");
-}
+            );
+    
+            // Tambahkan tombol inline ke pesan yang diteruskan di thread tujuan
+            editMessageReplyMarkup($chatId, $forwardedMessageId, $forwardedKeyboard);
+    
+            // Update tombol inline di pesan asli untuk menunjukkan status "Sudah Disetujui"
+            $keyboard = array(
+                'inline_keyboard' => array(
+                    array(
+                        array(
+                            'text' => '✅ Sudah Disetujui',
+                            'callback_data' => 'already_accepted'
+                        ),
+                        $callbackQuery->message->reply_markup->inline_keyboard[0][1] // Pertahankan tombol "Jawab Pertanyaan"
+                    )
+                )
+            );
+    
+            // Update tombol inline di pesan asli
+            editMessageReplyMarkup($chatId, $messageId, $keyboard);
+    
+        } else {
+            // Tangani kasus di mana message_id tidak ditemukan atau ada error
+            answerCallbackQuery($callbackQuery->id, "Gagal mengambil ID pesan yang diteruskan. Mungkin ada masalah dengan API Telegram.");
+        }
+    }
+    
 
     }
     
@@ -437,7 +441,7 @@ $keyboard = array(
             editMessageCaption($chatId, $messageId, $welcomeText, $keyboard);
             break;
     }
-}
+
 
 // Entry point - menerima update dari Telegram
 $update = json_decode(file_get_contents("php://input"));
