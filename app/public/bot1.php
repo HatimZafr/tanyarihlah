@@ -104,6 +104,53 @@ Klik tombol Lanjutkan Untuk Bertanya";
     editMessageCaption($chatId, $messageId, $text, $keyboard);
 }
 
+$adminGroupId = "-123456789"; // Ganti dengan ID grup admin Anda
+$adminThreadId = "123456"; // Ganti dengan ID thread di grup admin Anda
+
+function action_accept($chatId, $messageId,) {
+    global $adminGroupId, $adminThreadId;
+
+    // Dapatkan informasi pesan pengguna
+    $userMessageUrl = "https://t.me/c/$chatId/$messageId";
+
+    // Buat tombol inline keyboard yang mengarah ke pesan pengguna
+    $keyboard = array(
+        array(
+            array(
+                "text" => "Lihat Pesan Anda",
+                "url" => $userMessageUrl
+            )
+        )
+    );
+
+    // Teruskan pesan ke thread di grup admin
+    forwardMessageToThread($adminGroupId, $adminThreadId, $chatId, $messageId);
+
+    
+}
+
+function forwardMessageToThread($chatId, $threadId, $fromChatId, $messageId) {
+    global $apiUrl;
+    $data = array(
+        'chat_id' => $chatId,
+        'from_chat_id' => $fromChatId,
+        'message_id' => $messageId,
+        'reply_to_message_id' => $threadId
+    );
+
+    $options = array(
+        'http' => array(
+            'header'  => "Content-type: application/json\r\n",
+            'method'  => 'POST',
+            'content' => json_encode($data)
+        )
+    );
+    $context = stream_context_create($options);
+    $response = file_get_contents($apiUrl . "forwardMessage", false, $context);
+}
+
+
+
 function showMasyaikhList($chatId, $messageId = null) {
     $text = "Pilih profil Masyaikh yang ingin Anda lihat:";
     $keyboard = array(
@@ -223,9 +270,14 @@ function handleCallbackQuery($callbackQuery) {
     }
 
     switch($data) {
+        
         case "show_category_soal":
             showCategorySoal($chatId, $messageId);
             break;
+
+        case "action_accept":
+    action_accept($chatId, $messageId, );
+    break;
             
         case "show_masyaikh_list":
             $text = "Antum Dapat Melihat Biografi Masyaikh secara Ringkas di sini, Namun Fitur ini Sedang Dalam Tahap Pengembangan.";
