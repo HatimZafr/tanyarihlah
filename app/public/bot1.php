@@ -318,10 +318,12 @@ function handleCallbackQuery($callbackQuery) {
         // Check if the response was successfully decoded and contains a message_id
         if ($copiedMessageObj && isset($copiedMessageObj->result->message_id)) {
             // Get the message_id from the valid response
+            $groupChatId = 2177994977;
             $copiedMessageId = $copiedMessageObj->result->message_id;
+            $linkcopiedMessageId = $copiedMessageObj->result->message_id - 1;
     
             // Continue the process as usual
-            $copiedMessageLink = "https://t.me/c/{$chatId}/{$copiedMessageId}";
+            $copiedMessageLink = "https://t.me/c/{$groupChatId}/{$linkcopiedMessageId}";
     
             // Confirm callback to the user
             answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan disalin");
