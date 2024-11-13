@@ -314,33 +314,33 @@ function handleCallbackQuery($callbackQuery) {
         if ($forwardedMessageObj && isset($forwardedMessageObj->result->message_id)) {
             $forwardedMessageId = $forwardedMessageObj->result->message_id;
             
-            // Buat tombol inline untuk pesan yang diteruskan dengan link ke thread asli
-            $forwardedKeyboard = json_encode([
-                'inline_keyboard' => [
-                    [
-                        [
+            // Buat tombol inline untuk pesan yang akan dikirim
+            $keyboard = array(
+                'inline_keyboard' => array(
+                    array(
+                        array(
                             'text' => 'Lihat Pesan di Thread Asli',
                             'url' => $originalThreadLink
-                        ]
-                    ]
-                ]
-            ]);
+                        )
+                    )
+                )
+            );
             
-            // Tambahkan tombol inline ke pesan yang diteruskan di thread tujuan
-            editMessageReplyMarkup($chatId, $forwardedMessageId, $forwardedKeyboard); // Menggunakan $chatId bukan $targetThreadId
+            // Kirim pesan baru ke thread 152 dengan inline keyboard
+            sendMessage($targetThreadId, "Pesan yang diteruskan dari thread lain:", $keyboard);
             
             // Update tombol inline di pesan asli
-            $originalKeyboard = json_encode([
-                'inline_keyboard' => [
-                    [
-                        [
+            $originalKeyboard = array(
+                'inline_keyboard' => array(
+                    array(
+                        array(
                             'text' => '✅ Sudah Disetujui',
                             'callback_data' => 'already_accepted'
-                        ],
+                        ),
                         $callbackQuery->message->reply_markup->inline_keyboard[0][1]
-                    ]
-                ]
-            ]);
+                    )
+                )
+            );
             
             // Update tombol inline di pesan asli
             editMessageReplyMarkup($chatId, $messageId, $originalKeyboard);
