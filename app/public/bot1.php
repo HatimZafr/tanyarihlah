@@ -3,6 +3,7 @@
 $botToken = '7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI';
 $apiUrl = "https://api.telegram.org/bot$botToken/";
 
+
 function sendStartMessageWithPhoto($chatId, $photoUrl, $text, $keyboard) {
     global $apiUrl;
     $data = array(
@@ -297,13 +298,7 @@ function handleCallbackQuery($callbackQuery) {
         $message = $callbackQuery->message;
         $chatId = $message->chat->id;
         $messageId = $message->message_id;
-        $threadId = $message->message_thread_id ?? null;
-
-        if (!$threadId) {
-            // Jika threadId tidak ditemukan, tangani kesalahan
-            answerCallbackQuery($callbackQuery->id, "Tidak dapat menemukan thread untuk pesan ini.");
-            return;
-        }
+        
     
     
         // ID thread tujuan untuk copy
@@ -320,6 +315,7 @@ function handleCallbackQuery($callbackQuery) {
         }
     
         // Decode the JSON response from the Telegram API
+        $groupId = '2177994977';
         $copiedMessageObj = json_decode($copiedMessage);
     
         // Check if the response was successfully decoded and contains a message_id
@@ -328,7 +324,7 @@ function handleCallbackQuery($callbackQuery) {
             $copiedMessageId = $copiedMessageObj->result->message_id - 1;
     
             // Continue the process as usual
-            $copiedMessageLink = "https://t.me/c/{$chatId}/{$threadId}/{$copiedMessageId}";
+            $copiedMessageLink = "https://t.me/c/{$groupId}/{$copiedMessageId}";
     
             // Confirm callback to the user
             answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan disalin");
