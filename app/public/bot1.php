@@ -298,8 +298,6 @@ function handleCallbackQuery($callbackQuery) {
         $message = $callbackQuery->message;
         $chatId = $message->chat->id;
         $messageId = $message->message_id;
-        
-    
     
         // ID thread tujuan untuk copy
         $targetThreadId = "152"; // Replace with the target thread ID
@@ -315,7 +313,6 @@ function handleCallbackQuery($callbackQuery) {
         }
     
         // Decode the JSON response from the Telegram API
-        $groupId = '2177994977';
         $copiedMessageObj = json_decode($copiedMessage);
     
         // Check if the response was successfully decoded and contains a message_id
@@ -324,7 +321,7 @@ function handleCallbackQuery($callbackQuery) {
             $copiedMessageId = $copiedMessageObj->result->message_id;
     
             // Continue the process as usual
-            $copiedMessageLink = "https://t.me/c/{$groupId}/{$copiedMessageId}";
+            $copiedMessageLink = "https://t.me/c/{$chatId}/{$copiedMessageId}";
     
             // Confirm callback to the user
             answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan disalin");
@@ -365,6 +362,7 @@ function handleCallbackQuery($callbackQuery) {
             answerCallbackQuery($callbackQuery->id, "Gagal mengambil ID pesan yang disalin. Mungkin ada masalah dengan API Telegram.");
         }
     }
+    
     
     
 
