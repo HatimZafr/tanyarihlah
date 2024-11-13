@@ -297,7 +297,7 @@ function handleCallbackQuery($callbackQuery) {
     if ($data === 'action_accept') {
         $message = $callbackQuery->message;
         $chatId = $message->chat->id;
-        $messageId = $message->message_id;
+        $messageId = $message->message_id -1;
         
     
     
