@@ -326,14 +326,14 @@ function handleCallbackQuery($callbackQuery) {
             $copiedMessageLink = "https://t.me/c/{$groupChatId}/{$linkcopiedMessageId}";
     
             // Confirm callback to the user
-            answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan disalin");
+            answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan disalin ke Bank Soal");
     
             // Create an inline button for the copied message
             $copiedKeyboard = array(
                 'inline_keyboard' => array(
                     array(
                         array(
-                            'text' => 'Lihat Pesan Disalin',
+                            'text' => '🔘Menuju Pesan Asal',
                             'url' => $copiedMessageLink
                         )
                     )
