@@ -297,6 +297,14 @@ function handleCallbackQuery($callbackQuery) {
         $message = $callbackQuery->message;
         $chatId = $message->chat->id;
         $messageId = $message->message_id;
+        $threadId = $message->message_thread_id ?? null;
+
+        if (!$threadId) {
+            // Jika threadId tidak ditemukan, tangani kesalahan
+            answerCallbackQuery($callbackQuery->id, "Tidak dapat menemukan thread untuk pesan ini.");
+            return;
+        }
+    
     
         // ID thread tujuan untuk copy
         $targetThreadId = "152"; // Replace with the target thread ID
@@ -317,10 +325,10 @@ function handleCallbackQuery($callbackQuery) {
         // Check if the response was successfully decoded and contains a message_id
         if ($copiedMessageObj && isset($copiedMessageObj->result->message_id)) {
             // Get the message_id from the valid response
-            $copiedMessageId = $copiedMessageObj->result->message_id;
+            $copiedMessageId = $copiedMessageObj->result->message_id - 1;
     
             // Continue the process as usual
-            $copiedMessageLink = "https://t.me/c/{$chatId}/{$copiedMessageId}";
+            $copiedMessageLink = "https://t.me/c/{$chatId}/{$threadId}/{$copiedMessageId}";
     
             // Confirm callback to the user
             answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan disalin");
