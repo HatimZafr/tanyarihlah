@@ -317,24 +317,23 @@ function handleCallbackQuery($callbackQuery) {
     
         // Check if the response was successfully decoded and contains a message_id
         if ($copiedMessageObj && isset($copiedMessageObj->result->message_id)) {
-            // Get the message_id from the valid response
+            // Get the message_id of the copied message
             $groupChatId = 2177994977;
             $copiedMessageId = $copiedMessageObj->result->message_id;
-            $linkcopiedMessageId = $copiedMessageObj->result->message_id - 1;
     
-            // Continue the process as usual
-            $copiedMessageLink = "https://t.me/c/{$groupChatId}/{$linkcopiedMessageId}";
+            // Use the original message ID for the "Menuju Pesan Asal" link
+            $originalMessageLink = "https://t.me/c/{$groupChatId}/{$messageId}";
     
             // Confirm callback to the user
             answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan disalin ke Bank Soal");
     
-            // Create an inline button for the copied message
+            // Create an inline button for the original message
             $copiedKeyboard = array(
                 'inline_keyboard' => array(
                     array(
                         array(
                             'text' => '🔘Menuju Pesan Asal',
-                            'url' => $copiedMessageLink
+                            'url' => $originalMessageLink
                         )
                     )
                 )
@@ -365,9 +364,6 @@ function handleCallbackQuery($callbackQuery) {
         }
     }
     
-    
-    
-
     switch($data) {
         
         case "show_category_soal":
