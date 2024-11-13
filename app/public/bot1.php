@@ -173,14 +173,26 @@ Klik tombol Lanjutkan Untuk Bertanya";
 }
 
 
-
-
-function showMasyaikhList($chatId, $messageId = null) {
-    $text = "Pilih profil Masyaikh yang ingin Anda lihat:";
+function showContact($chatId, $messageId = null) {
+    $text = "Silakan pilih tautan ke channel atau akun yang diinginkan:";
     $keyboard = array(
         array(
-            array("text" => "Profil Syaikh 1", "callback_data" => "profil_syaikh_1"),
-            array("text" => "Profil Syaikh 2", "callback_data" => "profil_syaikh_2")
+            array("text" => "Telegram Markiz Aisha", "url" => "https://t.me/markezaisha")
+        ),
+        array(
+            array("text" => "Telegram Syaikh Abbas", "url" => "https://t.me/abbas_algounh")
+        ),
+        array(
+            array("text" => "Telegram Masyaikh Aden", "url" => "https://t.me/adensheikhs")
+        ),
+        array(
+            array("text" => "Telegram Minasshatul I'lam", "url" => "https://t.me/ielamsalafi")
+        ),
+        array(
+            array("text" => "YouTube Markiz Aisha", "url" => "https://www.youtube.com/@MarkezAisha")
+        ),
+        array(
+            array("text" => "YouTube Minasshatul I'lam", "url" => "https://www.youtube.com/@ielamsalafi")
         ),
         array(
             array("text" => "🔙 Kembali", "callback_data" => "back_to_start")
@@ -189,6 +201,7 @@ function showMasyaikhList($chatId, $messageId = null) {
 
     editMessageCaption($chatId, $messageId, $text, $keyboard);
 }
+
 
 function handleMessage($update) {
     $message = $update->message;
@@ -234,7 +247,7 @@ $keyboard = array(
         array("text" => "💡 Saran dan Masukan", "url" => "https://t.me/RihlahThalabulIlmiCS_bot")
     ),
     array(
-        array("text" => "📞 Kontak Kami", "callback_data" => "about_bot")
+        array("text" => "📞 Kontak Kami", "callback_data" => "showContact")
     )
 );
 
@@ -369,8 +382,10 @@ function handleCallbackQuery($callbackQuery) {
         case "show_category_soal":
             showCategorySoal($chatId, $messageId);
             break;
-
         
+        case "showContact":
+                showContact($chatId, $messageId);
+                break;
             
         case "show_masyaikh_list":
             $text = "Antum Dapat Melihat Biografi Masyaikh secara Ringkas di sini, Namun Fitur ini Sedang Dalam Tahap Pengembangan.";
@@ -431,7 +446,7 @@ $keyboard = array(
         array("text" => "💡 Saran dan Masukan", "url" => "https://t.me/RihlahThalabulIlmiCS_bot")
     ),
     array(
-        array("text" => "📞 Kontak Kami", "callback_data" => "about_bot")
+        array("text" => "📞 Kontak Kami", "callback_data" => "showContact")
     )
 );
             editMessageCaption($chatId, $messageId, $welcomeText, $keyboard);
