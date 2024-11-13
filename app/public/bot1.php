@@ -1,6 +1,6 @@
 <?php
 // Konfigurasi bot
-$botToken = '7386594817:AAGV5m2lqaRdprOjByO9nnALwzt-LgdA3kI';
+$botToken = '7831202681:AAHpc3DpAGLJEfbM3o9WC2NoUmdnHZ3xDyU';
 $apiUrl = "https://api.telegram.org/bot$botToken/";
 
 
