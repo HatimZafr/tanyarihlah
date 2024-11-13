@@ -321,7 +321,7 @@ function handleCallbackQuery($callbackQuery) {
         // Check if the response was successfully decoded and contains a message_id
         if ($copiedMessageObj && isset($copiedMessageObj->result->message_id)) {
             // Get the message_id from the valid response
-            $copiedMessageId = $copiedMessageObj->result->message_id - 1;
+            $copiedMessageId = $copiedMessageObj->result->message_id;
     
             // Continue the process as usual
             $copiedMessageLink = "https://t.me/c/{$groupId}/{$copiedMessageId}";
