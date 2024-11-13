@@ -73,7 +73,8 @@ function editMessageCaption($chatId, $messageId, $newCaption, $keyboard = null) 
     file_get_contents($url, false, $context);
 }
 
-function forwardMessage($chatId, $threadId, $messageId) {
+
+function copyMessage($chatId, $threadId, $messageId) {
     global $apiUrl;
     
     $data = array(
@@ -92,8 +93,9 @@ function forwardMessage($chatId, $threadId, $messageId) {
     );
     
     $context = stream_context_create($options);
-    return file_get_contents($apiUrl . "forwardMessage", false, $context);
+    return file_get_contents($apiUrl . "copyMessage", false, $context);
 }
+
 
 function answerCallbackQuery($callbackQueryId, $text) {
     global $apiUrl;
@@ -296,72 +298,70 @@ function handleCallbackQuery($callbackQuery) {
         $chatId = $message->chat->id;
         $messageId = $message->message_id;
     
-        // ID thread tujuan untuk forward
-        $targetThreadId = "152"; // Ganti dengan ID thread tujuan
+        // ID thread tujuan untuk copy
+        $targetThreadId = "152"; // Replace with the target thread ID
     
-        // Forward pesan ke thread tujuan dan tangkap ID pesan yang diteruskan
-        // Forward message and check if response is valid
-// Forward pesan dan cek apakah respons valid
-$forwardedMessage = forwardMessage($chatId, $targetThreadId, $messageId);
-
-// Cek apakah forwardMessage berhasil
-if ($forwardedMessage === false) {
-    // Tangani error (misalnya, tampilkan pesan error atau log error)
-    answerCallbackQuery($callbackQuery->id, "Gagal meneruskan pesan. Silakan coba lagi.");
-    return;
-}
-
-// Decode respons JSON dari API Telegram
-$forwardedMessageObj = json_decode($forwardedMessage);
-
-// Cek apakah respons berhasil didecode dan apakah terdapat message_id
-if ($forwardedMessageObj && isset($forwardedMessageObj->result->message_id)) {
-    // Dapatkan message_id dari respons yang valid
-    $forwardedMessageId = $forwardedMessageObj->result->message_id;
-
-    // Lanjutkan proses seperti biasa
-    $forwardedMessageLink = "https://t.me/c/{$chatId}/{$forwardedMessageId}";
-
-    // Konfirmasi callback ke pengguna
-    answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan diteruskan");
-
-    // Buat tombol inline untuk pesan yang diteruskan
-    $forwardedKeyboard = array(
-        'inline_keyboard' => array(
-            array(
-                array(
-                    'text' => 'Lihat Pesan Diteruskan',
-                    'url' => $forwardedMessageLink
+        // Copy the message to the target thread and check if the response is valid
+        $copiedMessage = copyMessage($chatId, $targetThreadId, $messageId);
+    
+        // Check if copyMessage was successful
+        if ($copiedMessage === false) {
+            // Handle error (e.g., display error message or log error)
+            answerCallbackQuery($callbackQuery->id, "Gagal menyalin pesan. Silakan coba lagi.");
+            return;
+        }
+    
+        // Decode the JSON response from the Telegram API
+        $copiedMessageObj = json_decode($copiedMessage);
+    
+        // Check if the response was successfully decoded and contains a message_id
+        if ($copiedMessageObj && isset($copiedMessageObj->result->message_id)) {
+            // Get the message_id from the valid response
+            $copiedMessageId = $copiedMessageObj->result->message_id;
+    
+            // Continue the process as usual
+            $copiedMessageLink = "https://t.me/c/{$chatId}/{$copiedMessageId}";
+    
+            // Confirm callback to the user
+            answerCallbackQuery($callbackQuery->id, "Pertanyaan telah disetujui dan disalin");
+    
+            // Create an inline button for the copied message
+            $copiedKeyboard = array(
+                'inline_keyboard' => array(
+                    array(
+                        array(
+                            'text' => 'Lihat Pesan Disalin',
+                            'url' => $copiedMessageLink
+                        )
+                    )
                 )
-            )
-        )
-    );
-
-    // Tambahkan tombol inline ke pesan yang diteruskan di thread tujuan
-    editMessageReplyMarkup($chatId, $forwardedMessageId, $forwardedKeyboard);
-
-    // Update tombol inline di pesan asli untuk menunjukkan status "Sudah Disetujui"
-    $keyboard = array(
-        'inline_keyboard' => array(
-            array(
-                array(
-                    'text' => '✅ Sudah Disetujui',
-                    'callback_data' => 'already_accepted'
-                ),
-                $callbackQuery->message->reply_markup->inline_keyboard[0][1] // Pertahankan tombol "Jawab Pertanyaan"
-            )
-        )
-    );
-
-    // Update tombol inline di pesan asli
-    editMessageReplyMarkup($chatId, $messageId, $keyboard);
-
-} else {
-    // Tangani kasus di mana message_id tidak ditemukan atau ada error
-    answerCallbackQuery($callbackQuery->id, "Gagal mengambil ID pesan yang diteruskan. Mungkin ada masalah dengan API Telegram.");
-}
-
+            );
+    
+            // Add the inline button to the copied message in the target thread
+            editMessageReplyMarkup($chatId, $copiedMessageId, $copiedKeyboard);
+    
+            // Update the inline button in the original message to indicate "Sudah Disetujui"
+            $keyboard = array(
+                'inline_keyboard' => array(
+                    array(
+                        array(
+                            'text' => '✅ Sudah Disetujui',
+                            'callback_data' => 'already_accepted'
+                        ),
+                        $callbackQuery->message->reply_markup->inline_keyboard[0][1] // Keep the "Jawab Pertanyaan" button
+                    )
+                )
+            );
+    
+            // Update the inline button in the original message
+            editMessageReplyMarkup($chatId, $messageId, $keyboard);
+    
+        } else {
+            // Handle cases where message_id was not found or an error occurred
+            answerCallbackQuery($callbackQuery->id, "Gagal mengambil ID pesan yang disalin. Mungkin ada masalah dengan API Telegram.");
+        }
     }
+    
     
 
     switch($data) {
