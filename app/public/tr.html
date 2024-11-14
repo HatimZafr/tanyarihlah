@@ -535,23 +535,6 @@
       function closeSuccessModal() {
         successModal.style.display = "none";
       }
-function generateQuestionCode(categoryId) {
-    // Prefix tetap "TR"
-    const prefix = "TR";
-    
-    // Random alphanumeric 4 karakter
-    const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
-    
-    // Format tanggal hari ini DDMMYY
-    const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // bulan dimulai dari 0
-    const year = String(today.getFullYear()).slice(-2); // ambil 2 digit terakhir
-    const dateString = `${day}${month}${year}`;
-
-    // Menggabungkan semua bagian
-    return `${prefix}${randomString}${dateString`;
-}
 
       // Function to send message to Telegram
       async function sendToTelegram(message) {
@@ -559,14 +542,12 @@ function generateQuestionCode(categoryId) {
         const uname = getUname();
         const threadId = getThreadId(currentCategory);
 
-const questionCode = generateQuestionCode();
 
         const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         const messageText = `
 🆕 Pertanyaan Baru
 👤 Chat ID: ${chatId}
 📝 Kategori: ${currentCategory}
-📜 Kode Pertanyaan: ${questionCode}
 
 ❓ Pertanyaan:
 ${message}
@@ -646,7 +627,6 @@ ${message}
           // Send confirmation to the user that their question has been sent
           const userMessageText = `
 📬 Pertanyaan Antum telah kami terima. Jazakumullahu Khairan sudah berpartisipasi!
-📜 Kode Pertanyaan: ${questionCode}
 ❓ Pertanyaan:
 ${message}
 
