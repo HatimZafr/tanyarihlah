@@ -550,7 +550,7 @@ function generateQuestionCode(categoryId) {
     const dateString = `${day}${month}${year}`;
 
     // Menggabungkan semua bagian
-    return `${prefix}${randomString}${dateString}${threadId}`;
+    return `${prefix}${randomString}${dateString`;
 }
 
       // Function to send message to Telegram
@@ -559,7 +559,7 @@ function generateQuestionCode(categoryId) {
         const uname = getUname();
         const threadId = getThreadId(currentCategory);
 
-const questionCode = generateQuestionCode(threadId);
+const questionCode = generateQuestionCode();
 
         const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         const messageText = `
