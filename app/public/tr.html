@@ -536,16 +536,49 @@
         successModal.style.display = "none";
       }
 
+function generateRandomString(length) {
+  const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+// Function to get formatted date DDMMYY
+function getFormattedDate() {
+  const now = new Date();
+  // Adjust to GMT+7
+  const gmt7Date = new Date(now.getTime() + (7 * 60 * 60 * 1000));
+  
+  const day = String(gmt7Date.getUTCDate()).padStart(2, '0');
+  const month = String(gmt7Date.getUTCMonth() + 1).padStart(2, '0');
+  const year = String(gmt7Date.getUTCFullYear()).slice(-2);
+  
+  return `${day}${month}${year}`;
+}
+
+// Function to generate question ID
+function generateQuestionId(threadId) {
+  const prefix = 'TR';
+  const random = generateRandomString(4);
+  const date = getFormattedDate();
+  return `${prefix}${random}${date}${threadId}`;
+}
+
+
+
       // Function to send message to Telegram
       async function sendToTelegram(message) {
         const chatId = getChatId();
         const uname = getUname();
         const threadId = getThreadId(currentCategory);
-
+const questionId = generateQuestionId(threadId);
 
         const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         const messageText = `
 🆕 Pertanyaan Baru
+📋 ID Pertanyaan: #${questionId}
 👤 Chat ID: ${chatId}
 📝 Kategori: ${currentCategory}
 
@@ -627,6 +660,8 @@ ${message}
           // Send confirmation to the user that their question has been sent
           const userMessageText = `
 📬 Pertanyaan Antum telah kami terima. Jazakumullahu Khairan sudah berpartisipasi!
+
+📋 ID Pertanyaan: ${questionId}
 ❓ Pertanyaan:
 ${message}
 
@@ -659,6 +694,7 @@ Tetap Semangat!!!
           return {
             success: true,
             messageId: messageId,
+questionId: questionId
           };
         } catch (error) {
           console.error("Error in sendToTelegram:", error);
