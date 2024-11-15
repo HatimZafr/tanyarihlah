@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Tanya Rihlah Menjawab </title>
+    <title>Admin Tanya Rihlah Menjawab</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -312,8 +312,8 @@
           <div class="question-header">
             <div class="question-info">
               <div class="user-info">
-                <i class="fas fa-hastag"></i>
-                <span id="questionId">Loading...</span>
+                <i class="fas fa-user"></i>
+                <span id="userName">Loading...</span>
               </div>
             </div>
           </div>
@@ -380,8 +380,7 @@
           message: urlParams.get('message') || 'No message provided',
           chat_id: urlParams.get('chat_id') || 'No chat ID provided',
           message_id: urlParams.get('message_id') || 'No message ID provided',
-          thread_id: urlParams.get('thread_id') || 'No thread ID provided',
-          question_id: urlParams.get('question_id') || 'No question ID provided'
+          thread_id: urlParams.get('thread_id') || 'No thread ID provided'
         };
       }
 
@@ -392,7 +391,6 @@
         document.getElementById('chatId').textContent = params.chat_id;
         document.getElementById('messageId').textContent = params.message_id;
         document.getElementById('threadId').textContent = params.thread_id;
-        document.getElementById('questionId').textContent = params.question_id;
       }
 
       async function sendTelegramMessage(chatId, message) {
@@ -425,8 +423,7 @@
             chat_id: TELEGRAM_ADMIN_GROUP,
             message_thread_id: ANSWERED_THREAD,
             text: message,
-            parse_mode: 'HTML',
-            disable_web_page_preview: true
+            parse_mode: 'HTML'
           })
         });
         
@@ -513,16 +510,15 @@ Pertanyaan Terjawab ✅
 ❓ Pertanyaan:\n${params.message}\n
 💡 Jawaban:\n${response}\n
 ━━━━━━━━━━━━━━━━━━
-Semoga Allah beri kita semua ilmu yang bermanfaat.
+Jazakumullahu Khairan  Sudah Bertanya Di Tanya Rihlah
 
-📩 Tanya Rihlah
+📩 Copyright © 2024 Tanya Rihlah
 Dipersilakan untuk dibagikan dengan izin.\n
           `.trim();
 
           const formattedMessageAnswered = `\n
 ✨ Tanya Rihlah - Pertanyaan Terjawab! ✨
 ━━━━━━━━━━━━━━━━━━
-🆔 ID Pertanyaan: ${params.question_id}
 ❓ Pertanyaan:
 ${params.message}
 
@@ -531,13 +527,16 @@ ${response}
 
 ━━━━━━━━━━━━━━━━━━
 
-➖➖➖➖➖➖➖
+Jazakumullahu Khairan Kepada yang Sudah Bertanya Di Tanya Rihlah
 
-❓ Kirim pertanyaan Antum di sini: @tanyarihlahbot
+📚 Semoga membantu!
+Jika  Antum ada pertanyaan, jangan ragu untuk bertanya di bot @tanyarihlahbot!
 
-🛫 https://t.me/thalibulilmibertanya
+📱 Ikuti kami di Telegram:
+Channel: https://t.me/thalibulilmibertanya
+Bot: https://t.me/tanyarihlahbot
 
-🔗© Tanya Rihlah
+🔗 Copyright © 2024 Tanya Rihlah
 Dipersilakan untuk dibagikan dengan izin.
 
           `.trim();
