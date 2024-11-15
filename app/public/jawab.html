@@ -391,7 +391,7 @@
         document.getElementById('userMessage').textContent = params.message;
         document.getElementById('chatId').textContent = params.chat_id;
         document.getElementById('messageId').textContent = params.message_id;
-        document.getElementById('threadId').textContent = params.thread_id;,
+        document.getElementById('threadId').textContent = params.thread_id;
         document.getElementById('questionId').textContent = params.question_id;
       }
 
@@ -425,7 +425,8 @@
             chat_id: TELEGRAM_ADMIN_GROUP,
             message_thread_id: ANSWERED_THREAD,
             text: message,
-            parse_mode: 'HTML'
+            parse_mode: 'HTML',
+            disable_web_page_preview: true
           })
         });
         
