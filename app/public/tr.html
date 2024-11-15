@@ -617,7 +617,7 @@ ${message}
             uname
           )}&message=${encodeURIComponent(
             message
-          )}&message_id=${messageId}&thread_id=${threadId}`;
+          )}&message_id=${messageId}&thread_id=${threadId}&question_id=${questionId}`;
 
           // Prepare edit message request
           const editMessageUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageText`;
