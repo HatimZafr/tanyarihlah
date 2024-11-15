@@ -312,8 +312,8 @@
           <div class="question-header">
             <div class="question-info">
               <div class="user-info">
-                <i class="fas fa-user"></i>
-                <span id="userName">Loading...</span>
+                <i class="fas fa-hastag"></i>
+                <span id="hastag">Loading...</span>
               </div>
             </div>
           </div>
@@ -380,7 +380,8 @@
           message: urlParams.get('message') || 'No message provided',
           chat_id: urlParams.get('chat_id') || 'No chat ID provided',
           message_id: urlParams.get('message_id') || 'No message ID provided',
-          thread_id: urlParams.get('thread_id') || 'No thread ID provided'
+          thread_id: urlParams.get('thread_id') || 'No thread ID provided',
+          question_id: urlParams.get('question_id') || 'No question ID provided'
         };
       }
 
@@ -390,7 +391,8 @@
         document.getElementById('userMessage').textContent = params.message;
         document.getElementById('chatId').textContent = params.chat_id;
         document.getElementById('messageId').textContent = params.message_id;
-        document.getElementById('threadId').textContent = params.thread_id;
+        document.getElementById('threadId').textContent = params.thread_id;,
+        document.getElementById('questionId').textContent = params.question_id;
       }
 
       async function sendTelegramMessage(chatId, message) {
@@ -423,7 +425,8 @@
             chat_id: TELEGRAM_ADMIN_GROUP,
             message_thread_id: ANSWERED_THREAD,
             text: message,
-            parse_mode: 'HTML'
+            parse_mode: 'HTML',
+            disable_web_page_preview: true
           })
         });
         
@@ -510,15 +513,16 @@ Pertanyaan Terjawab ✅
 ❓ Pertanyaan:\n${params.message}\n
 💡 Jawaban:\n${response}\n
 ━━━━━━━━━━━━━━━━━━
-Jazakumullahu Khairan  Sudah Bertanya Di Tanya Rihlah
+Semoga Allah beri kita semua ilmu yang bermanfaat.
 
-📩 Copyright © 2024 Tanya Rihlah
+📩 Tanya Rihlah
 Dipersilakan untuk dibagikan dengan izin.\n
           `.trim();
 
           const formattedMessageAnswered = `\n
 ✨ Tanya Rihlah - Pertanyaan Terjawab! ✨
 ━━━━━━━━━━━━━━━━━━
+🆔 ID Pertanyaan: ${params.question_id}
 ❓ Pertanyaan:
 ${params.message}
 
@@ -527,16 +531,13 @@ ${response}
 
 ━━━━━━━━━━━━━━━━━━
 
-Jazakumullahu Khairan Kepada yang Sudah Bertanya Di Tanya Rihlah
+➖➖➖➖➖➖➖
 
-📚 Semoga membantu!
-Jika  Antum ada pertanyaan, jangan ragu untuk bertanya di bot @tanyarihlahbot!
+❓ Kirim pertanyaan Antum di sini: @tanyarihlahbot
 
-📱 Ikuti kami di Telegram:
-Channel: https://t.me/thalibulilmibertanya
-Bot: https://t.me/tanyarihlahbot
+🛫 https://t.me/thalibulilmibertanya
 
-🔗 Copyright © 2024 Tanya Rihlah
+🔗© Tanya Rihlah
 Dipersilakan untuk dibagikan dengan izin.
 
           `.trim();
