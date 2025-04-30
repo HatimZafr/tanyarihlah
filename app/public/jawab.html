@@ -359,216 +359,227 @@
     </div>
 
     <script>
-      // Constants
-      const TELEGRAM_BOT_TOKEN = '7831202681:AAHpc3DpAGLJEfbM3o9WC2NoUmdnHZ3xDyU';
-      const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
-      const TELEGRAM_ADMIN_GROUP = '-1002177994977';
-      const ANSWERED_THREAD = '159';
-
-      // DOM Elements
-      const form = document.getElementById('responseForm');
-      const textarea = document.getElementById('responseText');
-      const sendButton = document.getElementById('sendButton');
-      const errorMessage = document.getElementById('responseError');
-      const modal = document.getElementById('successModal');
-
-      // Functions
-      function getUrlParameters() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return {
-          name: urlParams.get('uname') || 'No name provided',
-          message: urlParams.get('message') || 'No message provided',
-          chat_id: urlParams.get('chat_id') || 'No chat ID provided',
-          message_id: urlParams.get('message_id') || 'No message ID provided',
-          thread_id: urlParams.get('thread_id') || 'No thread ID provided',
-          question_id: urlParams.get('question_id') || 'No Question ID provided'
-        };
-      }
-
-      function updateUIWithParameters() {
-        const params = getUrlParameters();
-        document.getElementById('userName').textContent = params.name;
-        document.getElementById('userMessage').textContent = params.message;
-        document.getElementById('chatId').textContent = params.chat_id;
-        document.getElementById('messageId').textContent = params.message_id;
-        document.getElementById('threadId').textContent = params.thread_id;
-        document.getElementById('questionId').textContent = params.question_id;
-      }
-
-      async function sendTelegramMessage(chatId, message) {
-        const response = await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: message,
-            parse_mode: 'HTML'
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to send message');
+        // Constants
+        const TELEGRAM_BOT_TOKEN = '7831202681:AAHpc3DpAGLJEfbM3o9WC2NoUmdnHZ3xDyU';
+        const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
+        const TELEGRAM_ADMIN_GROUP = '-1002177994977';
+        const ANSWERED_THREAD = '159';
+      
+        // DOM Elements
+        const form = document.getElementById('responseForm');
+        const textarea = document.getElementById('responseText');
+        const sendButton = document.getElementById('sendButton');
+        const errorMessage = document.getElementById('responseError');
+        const modal = document.getElementById('successModal');
+      
+        // Escape user input to prevent HTML injection
+        function escapeHTML(str) {
+          return str.replace(/[&<>"']/g, function (tag) {
+            const charsToReplace = {
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#39;'
+            };
+            return charsToReplace[tag] || tag;
+          });
         }
-        
-        return await response.json();
-      }
-
-      async function sendTelegramMessageAnswered(chatId, message) {
-        const response = await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_ADMIN_GROUP,
-            message_thread_id: ANSWERED_THREAD,
-            text: message,
-            parse_mode: 'HTML'
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to send message');
+      
+        function getUrlParameters() {
+          const urlParams = new URLSearchParams(window.location.search);
+          return {
+            name: escapeHTML(urlParams.get('uname') || 'No name provided'),
+            message: escapeHTML(urlParams.get('message') || 'No message provided'),
+            chat_id: urlParams.get('chat_id') || 'No chat ID provided',
+            message_id: urlParams.get('message_id') || 'No message ID provided',
+            thread_id: urlParams.get('thread_id') || 'No thread ID provided',
+            question_id: urlParams.get('question_id') || 'No Question ID provided'
+          };
         }
-        
-        return await response.json();
-      }
-
-      async function updateAdminThreadMessage(messageId, threadId) {
-        const response = await fetch(`${TELEGRAM_API_URL}/editMessageReplyMarkup`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            chat_id: TELEGRAM_ADMIN_GROUP,
-            message_id: messageId,
-            message_thread_id: threadId,
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: '✅ Sudah Dijawab',
-                    callback_data: 'answered'
-                  }
-                ]
-              ]
-            }
-          })
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(`Failed to update admin message: ${errorData.description}`);
-        }
-
-        return await response.json();
-      }
-
-
-
-      function showModal() {
-        modal.classList.add('show');
-      }
-
-      function closeModal() {
-        modal.classList.remove('show');
-      }
-
-      function setLoading(isLoading) {
-        sendButton.disabled = isLoading;
-        if (isLoading) {
-          sendButton.classList.add('loading');
-          sendButton.textContent = 'Sending...';
-        } else {
-          sendButton.classList.remove('loading');
-          sendButton.textContent = 'Send Response';
-        }
-      }
-
-      // Event Listeners
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const response = textarea.value.trim();
-        
-        // Validate response length
-        if (response.length < 5) {
-          errorMessage.style.display = 'block';
-          return;
-        }
-        
-        errorMessage.style.display = 'none';
-        setLoading(true);
-        
-        try {
+      
+        function updateUIWithParameters() {
           const params = getUrlParameters();
-          
-          const formattedMessage = `\n
-Pertanyaan Terjawab ✅
-━━━━━━━━━━━━━━━━━━
-🆔 ID Pertanyaan: ${params.question_id}
-❓ Pertanyaan:\n${params.message}\n
-💡 Jawaban:\n${response}\n
-━━━━━━━━━━━━━━━━━━
-Semoga Allah beri kita semua ilmu yang bermanfaat.
+          document.getElementById('userName').textContent = params.name;
+          document.getElementById('userMessage').textContent = params.message;
+          document.getElementById('chatId').textContent = params.chat_id;
+          document.getElementById('messageId').textContent = params.message_id;
+          document.getElementById('threadId').textContent = params.thread_id;
+        document.getElementById('questionId').textContent = params.question_id;
 
-📩 © Tanya Rihlah\n
-          `.trim();
-
-          const formattedMessageAnswered = `\n
-✨ Tanya Rihlah - Pertanyaan Terjawab! ✨
-━━━━━━━━━━━━━━━━━━
-🆔 ID Pertanyaan: #${params.question_id}
-❓ Pertanyaan:
-${params.message}
-
-💡 Jawaban:
-${response}
-
-━━━━━━━━━━━━━━━━━━
-
-➖➖➖➖➖➖➖
-
-❓ Kirim pertanyaan Antum di sini: @tanyarihlahbot
-
-🛫 https://t.me/thalibulilmibertanya
-
-🔗 © Tanya Rihlah
-Dipersilakan untuk dibagikan dengan izin.
-
-          `.trim();
-
-          await sendTelegramMessage(params.chat_id, formattedMessage);
-          await updateAdminThreadMessage(params.message_id, params.thread_id);
-          await sendTelegramMessageAnswered(TELEGRAM_ADMIN_GROUP, formattedMessageAnswered);
-          showModal();
-          textarea.value = '';
-          
-        } catch (error) {
-          console.error('Error sending message:', error);
-          alert(`Error sending response: ${error.message}`);
-        } finally {
-          setLoading(false);
         }
-      });
-
-      textarea.addEventListener('input', () => {
-        if (textarea.value.trim().length >= 10) {
+      
+        async function sendTelegramMessage(chatId, message) {
+          const response = await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text: message,
+              parse_mode: 'HTML'
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to send message');
+          }
+          
+          return await response.json();
+        }
+      
+        async function sendTelegramMessageAnswered(chatId, message) {
+          const response = await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              chat_id: TELEGRAM_ADMIN_GROUP,
+              message_thread_id: ANSWERED_THREAD,
+              text: message,
+              parse_mode: 'HTML'
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to send message');
+          }
+          
+          return await response.json();
+        }
+      
+        async function updateAdminThreadMessage(messageId, threadId) {
+          const response = await fetch(`${TELEGRAM_API_URL}/editMessageReplyMarkup`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              chat_id: TELEGRAM_ADMIN_GROUP,
+              message_id: messageId,
+              message_thread_id: threadId,
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: '✅ Sudah Dijawab',
+                      callback_data: 'answered'
+                    }
+                  ]
+                ]
+              }
+            })
+          });
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Failed to update admin message: ${errorData.description}`);
+          }
+      
+          return await response.json();
+        }
+      
+        function showModal() {
+          modal.classList.add('show');
+        }
+      
+        function closeModal() {
+          modal.classList.remove('show');
+        }
+      
+        function setLoading(isLoading) {
+          sendButton.disabled = isLoading;
+          if (isLoading) {
+            sendButton.classList.add('loading');
+            sendButton.textContent = 'Sending...';
+          } else {
+            sendButton.classList.remove('loading');
+            sendButton.textContent = 'Kirim Jawaban';
+          }
+        }
+      
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const responseRaw = textarea.value.trim();
+          
+          if (responseRaw.length < 5) {
+            errorMessage.style.display = 'block';
+            return;
+          }
+          
           errorMessage.style.display = 'none';
-        }
-      });
-
-      window.onclick = (event) => {
-        if (event.target === modal) {
-          closeModal();
-        }
-      };
-
-      // Initialize
-      window.addEventListener('load', updateUIWithParameters);
-    </script>
+          setLoading(true);
+          
+          try {
+            const params = getUrlParameters();
+            const response = escapeHTML(responseRaw);
+      
+            const formattedMessage = `\n
+      Pertanyaan Terjawab ✅
+      ━━━━━━━━━━━━━━━━━━
+      🆔 ID Pertanyaan: ${params.question_id}
+      ❓ Pertanyaan:\n${params.message}\n
+      💡 Jawaban:\n${response}\n
+      ━━━━━━━━━━━━━━━━━━
+      Semoga Allah beri kita semua ilmu yang bermanfaat.
+      
+      📩 © Tanya Rihlah\n
+            `.trim();
+      
+            const formattedMessageAnswered = `\n
+      ✨ Tanya Rihlah - Pertanyaan Terjawab! ✨
+      ━━━━━━━━━━━━━━━━━━
+      🆔 ID Pertanyaan: #${params.question_id}
+      ❓ Pertanyaan:
+      ${params.message}
+      
+      💡 Jawaban:
+      ${response}
+      
+      ━━━━━━━━━━━━━━━━━━
+      
+      ➖➖➖➖➖➖➖
+      
+      ❓ Kirim pertanyaan Antum di sini: @tanyarihlahbot
+      
+      🛫 https://t.me/thalibulilmibertanya
+      
+      🔗 © Tanya Rihlah
+      Dipersilakan untuk dibagikan dengan izin.
+            `.trim();
+      
+            await sendTelegramMessage(params.chat_id, formattedMessage);
+            await updateAdminThreadMessage(params.message_id, params.thread_id);
+            await sendTelegramMessageAnswered(TELEGRAM_ADMIN_GROUP, formattedMessageAnswered);
+            showModal();
+            textarea.value = '';
+            
+          } catch (error) {
+            console.error('Error sending message:', error);
+            alert(`Error sending response: ${error.message}`);
+          } finally {
+            setLoading(false);
+          }
+        });
+      
+        textarea.addEventListener('input', () => {
+          if (textarea.value.trim().length >= 10) {
+            errorMessage.style.display = 'none';
+          }
+        });
+      
+        window.onclick = (event) => {
+          if (event.target === modal) {
+            closeModal();
+          }
+        };
+      
+        // Initialize
+        window.addEventListener('load', updateUIWithParameters);
+      </script>
   </body>
 </html>
