@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Tanya Rihlah Menjawab</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Ubuntu;
+      }
+
+      body {
+        background: #f0f2f5;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+
+      .header {
+        text-align: center;
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        background: linear-gradient(135deg, #4f0c2b 0%, #731231 100%);
+      }
+
+      .header h1 {
+        color: white;
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+
+      .header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+      }
+
+      .questions-container {
+        display: grid;
+        gap: 16px;
+        padding: 8px;
+      }
+
+      .question-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .question-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(45deg, #4f0c2b, #731231);
+      }
+
+      .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .question-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .metadata {
+        color: #5f6368;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .question-content {
+        margin-bottom: 16px;
+      }
+
+      .question-text {
+        color: #202124;
+        font-size: 18px;
+        line-height: 1.5;
+        margin-bottom: 12px;
+      }
+
+      .user-info {
+        color: #5f6368;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .user-info i {
+        color: #4f0c2b;
+      }
+
+      .response-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #dadce0;
+      }
+
+      .response-form textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 12px;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+        font-size: 14px;
+        resize: vertical;
+      }
+
+      .response-form textarea:focus {
+        outline: none;
+        border-color: #4f0c2b;
+        box-shadow: 0 0 0 2px rgba(79, 12, 43, 0.1);
+      }
+
+      .response-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn:hover:not(:disabled) {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #4f0c2b, #731231);
+        color: white;
+      }
+
+      .btn-secondary {
+        background: #f0f2f5;
+        color: #202124;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .modal.show {
+        display: flex;
+        opacity: 1;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        text-align: center;
+        position: relative;
+        max-width: 90%;
+        width: 400px;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      }
+
+      .modal.show .modal-content {
+        transform: scale(1);
+      }
+
+      .checkmark {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: block;
+        stroke-width: 2;
+        stroke: #4BB543;
+        stroke-miterlimit: 10;
+        margin: 10% auto;
+        box-shadow: inset 0px 0px 0px #4BB543;
+        animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+      }
+
+      .checkmark__circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #4BB543;
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+      }
+
+      .checkmark__check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+      }
+
+      .error-message {
+        color: #dc3545;
+        font-size: 14px;
+        margin-top: 4px;
+        display: none;
+      }
+
+      .loading {
+        position: relative;
+        pointer-events: none;
+      }
+
+      .loading::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        margin: -10px 0 0 -10px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes stroke {
+        100% { stroke-dashoffset: 0; }
+      }
+
+      @keyframes scale {
+        0%, 100% { transform: none; }
+        50% { transform: scale3d(1.1, 1.1, 1); }
+      }
+
+      @keyframes fill {
+        100% { box-shadow: inset 0px 0px 0px 30px #4BB543; }
+      }
+
+      @media (max-width: 640px) {
+        .question-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+
+        .response-actions {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>Admin Menjawab</h1>
+        <p>Merespon Thalibul Ilmi Bertanya</p>
+      </header>
+
+      <div class="questions-container">
+        <div class="question-card">
+          <div class="question-header">
+            <div class="question-info">
+              <div class="user-info">
+                <i class="fas fa-user"></i>
+                <span id="userName">Loading...</span>
+              </div>
+            </div>
+          </div>
+          <div class="question-content">
+            <p class="question-text" id="userMessage">Loading...</p>
+            <p class="metadata">
+              Chat ID: <span id="chatId">Loading...</span> | 
+              Message ID: <span id="messageId">Loading...</span>
+            </p>
+          </div>
+          <form class="response-form" id="responseForm">
+            <div>
+              <textarea 
+                id="responseText" 
+                placeholder="Type your response here..." 
+                required
+                minlength="5"
+              ></textarea>
+              <div class="error-message" id="responseError">
+                Tidak Boleh Kurang dari 5 Karakter
+              </div>
+            </div>
+            <div class="response-actions">
+              <button type="submit" class="btn btn-primary" id="sendButton">
+                Kirim Jawaban
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="successModal" class="modal">
+      <div class="modal-content">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+        <h3 style="color: #4BB543; font-size: 24px; margin-bottom: 10px;">Berhasil</h3>
+        <p style="color: #666; margin-bottom: 20px;">Jawaban Berhasil Terkirim Ke User</p>
+        <button onclick="closeModal()" class="btn btn-primary">Tutup</button>
+      </div>
+    </div>
+
+    <script>
+        // Constants
+        const TELEGRAM_BOT_TOKEN = '7831202681:AAHpc3DpAGLJEfbM3o9WC2NoUmdnHZ3xDyU';
+        const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
+        const TELEGRAM_ADMIN_GROUP = '-1002177994977';
+        const ANSWERED_THREAD = '159';
+      
+        // DOM Elements
+        const form = document.getElementById('responseForm');
+        const textarea = document.getElementById('responseText');
+        const sendButton = document.getElementById('sendButton');
+        const errorMessage = document.getElementById('responseError');
+        const modal = document.getElementById('successModal');
+      
+        // Escape user input to prevent HTML injection
+        function escapeHTML(str) {
+          return str.replace(/[&<>"']/g, function (tag) {
+            const charsToReplace = {
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#39;'
+            };
+            return charsToReplace[tag] || tag;
+          });
+        }
+      
+        function getUrlParameters() {
+          const urlParams = new URLSearchParams(window.location.search);
+          return {
+            name: escapeHTML(urlParams.get('uname') || 'No name provided'),
+            message: escapeHTML(urlParams.get('message') || 'No message provided'),
+            chat_id: urlParams.get('chat_id') || 'No chat ID provided',
+            message_id: urlParams.get('message_id') || 'No message ID provided',
+            thread_id: urlParams.get('thread_id') || 'No thread ID provided',
+            question_id: urlParams.get('question_id') || 'No Question ID provided'
+          };
+        }
+      
+        function updateUIWithParameters() {
+          const params = getUrlParameters();
+          document.getElementById('userName').textContent = params.name;
+          document.getElementById('userMessage').textContent = params.message;
+          document.getElementById('chatId').textContent = params.chat_id;
+          document.getElementById('messageId').textContent = params.message_id;
+          document.getElementById('threadId').textContent = params.thread_id;
+        document.getElementById('questionId').textContent = params.question_id;
+
+        }
+      
+        async function sendTelegramMessage(chatId, message) {
+          const response = await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text: message,
+              parse_mode: 'HTML'
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to send message');
+          }
+          
+          return await response.json();
+        }
+      
+        async function sendTelegramMessageAnswered(chatId, message) {
+          const response = await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              chat_id: TELEGRAM_ADMIN_GROUP,
+              message_thread_id: ANSWERED_THREAD,
+              text: message,
+              parse_mode: 'HTML'
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to send message');
+          }
+          
+          return await response.json();
+        }
+      
+        async function updateAdminThreadMessage(messageId, threadId) {
+          const response = await fetch(`${TELEGRAM_API_URL}/editMessageReplyMarkup`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              chat_id: TELEGRAM_ADMIN_GROUP,
+              message_id: messageId,
+              message_thread_id: threadId,
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: '✅ Sudah Dijawab',
+                      callback_data: 'answered'
+                    }
+                  ]
+                ]
+              }
+            })
+          });
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Failed to update admin message: ${errorData.description}`);
+          }
+      
+          return await response.json();
+        }
+      
+        function showModal() {
+          modal.classList.add('show');
+        }
+      
+        function closeModal() {
+          modal.classList.remove('show');
+        }
+      
+        function setLoading(isLoading) {
+          sendButton.disabled = isLoading;
+          if (isLoading) {
+            sendButton.classList.add('loading');
+            sendButton.textContent = 'Sending...';
+          } else {
+            sendButton.classList.remove('loading');
+            sendButton.textContent = 'Kirim Jawaban';
+          }
+        }
+      
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const responseRaw = textarea.value.trim();
+          
+          if (responseRaw.length < 5) {
+            errorMessage.style.display = 'block';
+            return;
+          }
+          
+          errorMessage.style.display = 'none';
+          setLoading(true);
+          
+          try {
+            const params = getUrlParameters();
+            const response = escapeHTML(responseRaw);
+      
+            const formattedMessage = `\n
+      Pertanyaan Terjawab ✅
+      ━━━━━━━━━━━━━━━━━━
+      🆔 ID Pertanyaan: ${params.question_id}
+      ❓ Pertanyaan:\n${params.message}\n
+      💡 Jawaban:\n${response}\n
+      ━━━━━━━━━━━━━━━━━━
+      Semoga Allah beri kita semua ilmu yang bermanfaat.
+      
+      📩 © Tanya Rihlah\n
+            `.trim();
+      
+            const formattedMessageAnswered = `\n
+      ✨ Tanya Rihlah - Pertanyaan Terjawab! ✨
+      ━━━━━━━━━━━━━━━━━━
+      🆔 ID Pertanyaan: #${params.question_id}
+      ❓ Pertanyaan:
+      ${params.message}
+      
+      💡 Jawaban:
+      ${response}
+      
+      ━━━━━━━━━━━━━━━━━━
+      
+      ➖➖➖➖➖➖➖
+      
+      ❓ Kirim pertanyaan Antum di sini: @tanyarihlahbot
+      
+      🛫 https://t.me/thalibulilmibertanya
+      
+      🔗 © Tanya Rihlah
+      Dipersilakan untuk dibagikan dengan izin.
+            `.trim();
+      
+            await sendTelegramMessage(params.chat_id, formattedMessage);
+            await updateAdminThreadMessage(params.message_id, params.thread_id);
+            await sendTelegramMessageAnswered(TELEGRAM_ADMIN_GROUP, formattedMessageAnswered);
+            showModal();
+            textarea.value = '';
+            
+          } catch (error) {
+            console.error('Error sending message:', error);
+            alert(`Error sending response: ${error.message}`);
+          } finally {
+            setLoading(false);
+          }
+        });
+      
+        textarea.addEventListener('input', () => {
+          if (textarea.value.trim().length >= 10) {
+            errorMessage.style.display = 'none';
+          }
+        });
+      
+        window.onclick = (event) => {
+          if (event.target === modal) {
+            closeModal();
+          }
+        };
+      
+        // Initialize
+        window.addEventListener('load', updateUIWithParameters);
+      </script>
+  </body>
+</html>
